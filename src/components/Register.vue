@@ -5,19 +5,19 @@
                 <form>
                     <div class="form-group">
                         <label for="email">Email address:</label>
-                        <input v-model="user.email" type="email" placeholder="Email" class="form-control" required>
+                        <input @keyup.enter="register" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                     </div>
                     <div class="form-group">
                         <label>Username</label>
-                        <input v-model="user.username" type="text" class="form-control" placeholder="Username">
+                        <input @keyup.enter="register" v-model="user.username" type="text" class="form-control" placeholder="Username">
                     </div>
                     <div class="form-group">
                         <label for="pwd">Password:</label>
-                        <input v-model="user.password" type="password" placeholder="Password" class="form-control">
+                        <input @keyup.enter="register" v-model="user.password" type="password" placeholder="Password" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input v-model="user.password_confirmation" type="password" placeholder="Confirm password" class="form-control">
+                        <input @keyup.enter="register" v-model="user.password_confirmation" type="password" placeholder="Confirm password" class="form-control">
                     </div>
                     <button @click.prevent="register" class="btn btn-primary">Register</button>
                 </form>

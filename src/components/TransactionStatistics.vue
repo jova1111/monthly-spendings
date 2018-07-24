@@ -3,22 +3,16 @@
         
         <div class="centerOnMiddle">
             
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown button
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <div v-for="singleYear of allYears" :key="singleYear.data">{{singleYear.data}}</div>
-                </div>
-            </div>
-
+                <select class="moveToLeft" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
+                    <option v-for="singleYear of allYears" :key="singleYear"> {{singleYear}} </option>
+                </select>
             <div>
                 <table id="transactions">
                     <tr>
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                    <tr v-for="(month_name, index) of month_names" :key="month_name" @click="getTransactionsForMonth(index+1,2018)">
+                    <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="transactionList[index] != 0" @click="getTransactionsForMonth(index+1,selectedYear)">
                         <td>{{ month_name }}</td>
                         <td>{{ transactionList[index] }}</td>
                     </tr>
@@ -39,6 +33,7 @@ export default {
     data()
     {
         return {
+            selectedYear:2018,
             allYears: [],
             singleYear: '',
             yearToSend: '',
@@ -59,6 +54,7 @@ export default {
         {
             transactionService.getTransactionsForYear(yearToSend)
                 .then(response=>{
+                    console.log('trans list after response',response);
                     this.transactionList = response;
                 }).catch(error=>{
                     alert(error);
@@ -67,22 +63,13 @@ export default {
         getTransactionsForMonth(monthToSend, yearToSend)
         {
             this.$router.push({ name: 'TransactionView', params: {Month: monthToSend, Year: yearToSend }})
-            transactionService.getTransactionsForMonth(monthToSend, yearToSend)
-                .then(response=>
-                {
-                    this.transactionList = response;
-                }).catch(error=>
-                {
-                    alert(error);
-                });
         },
         getAllYears()
         {
             transactionService.getAllYears()
                 .then(response=>
                 {
-                    console.log(response);
-                    this.allYears=response;
+                    this.allYears=response[0];
                 }).catch(error=>
                 {
                     alert(error);
@@ -133,8 +120,8 @@ export default {
  }
 .centerOnMiddle
 {
-    width: 20%;
-    margin-left: 20%;
+    width: 50%;
+    margin-left: auto;
     margin-right: auto;
     /*position: fixed;
     left: 50%;
@@ -158,6 +145,10 @@ export default {
 #transactions tr:nth-child(even){background-color: rgb(222, 222, 255);}
 
 #transactions tr:hover {background-color: rgb(190, 190, 255);}
+
+.moveToLeft{
+    margin-left:0%;
+}
 
 #transactions th 
 {

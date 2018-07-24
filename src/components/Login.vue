@@ -5,11 +5,11 @@
                 <form action="/login.php">
                     <div class="form-group">
                         <label for="email">Email address:</label>
-                        <input v-model="user.email" type="email" placeholder="Email" class="form-control" required>
+                        <input @keyup.enter="login" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="pwd">Password:</label>
-                        <input v-model="user.password" type="password" placeholder="Password" class="form-control" id="pwd" required>
+                        <input @keyup.enter="login" v-model="user.password" type="password" placeholder="Password" class="form-control" id="pwd" required>
                     </div>
                     <button @click.prevent="login" class="btn btn-primary">Log in</button>
                 </form>

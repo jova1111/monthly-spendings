@@ -13,11 +13,11 @@
                         <td>{{transObj.description}}</td>
                         <td>{{transObj.moneyspent}}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="isCurrentMonth">
                         <td>New transaction</td>
-                        <td><input type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
-                        <td><input type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
-                    </tr> <button @click.prevent="createTransaction" class="btn btn-primary">Add transaction</button>
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
+                    </tr> <button  v-if="isCurrentMonth" @click.prevent="createTransaction" class="btn btn-primary">Add transaction</button>
                 </table>
             </div>
         </div>
@@ -26,12 +26,14 @@
 <script>
 import transactionService from '../services/transaction-service'
 import {Transaction} from '../models/transaction'
+import moment from 'moment'
 export default 
 {
     name: 'TransactionView',
     data()
     {
         return{
+            isCurrentMonth: false,
             transaction: new Transaction(),
             transactionList: []
         }
@@ -58,10 +60,11 @@ export default
         },
         getTransactionsForMonth()
         {
+            let monthToCheck = moment(Date.now()).format('M');
+            let yearToCheck = moment(Date.now()).format('YYYY');
             let yearToSend = this.$route.params.Year;
             let monthToSend = this.$route.params.Month;
-            console.log(monthToSend);
-            console.log(yearToSend);
+            this.isCurrentMonth=(monthToCheck == monthToSend && yearToCheck == yearToSend);
             transactionService.getTransactionsForMonth(monthToSend,yearToSend)
                 .then(response=>
                 {
