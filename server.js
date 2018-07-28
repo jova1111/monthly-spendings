@@ -1,0 +1,11 @@
+const express = require('express');
+const port = process.env.PORT || 8080;
+const app = express();
+
+app.use(exoress.static(__dirname + "/dist/"));
+app.get(/.*/, function(request, response) {
+    response.sendfile(__dirname + "/dist/index.html");
+});
+app.listen(port);
+
+console.log('Server started....');
