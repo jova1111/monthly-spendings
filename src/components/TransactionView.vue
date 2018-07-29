@@ -8,16 +8,16 @@
                         <th class="description">Description</th>
                         <th class="money-spent">Money spent</th>
                     </tr>
-                    <tr v-for="transObj in transactionList" v-bind:key="transObj.id">
+                    <tr id="new-transaction" v-if="isCurrentMonth">
+                        <td>New transaction</td>
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
+                    </tr>
+                    <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id">
                         <td>{{transObj.date}}</td>
                         <td>{{transObj.description}}</td>
                         <td>{{transObj.moneyspent}}</td>
                     </tr>
-                    <tr v-if="isCurrentMonth">
-                        <td>New transaction</td>
-                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
-                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
-                    </tr> <button  v-if="isCurrentMonth" @click.prevent="createTransaction" class="btn btn-primary">Add transaction</button>
                 </table>
             </div>
         </div>
@@ -26,6 +26,7 @@
 <script>
 import transactionService from '../services/transaction-service'
 import {Transaction} from '../models/transaction'
+import VueRouter from 'vue-router'
 import moment from 'moment'
 export default 
 {
@@ -33,15 +34,33 @@ export default
     data()
     {
         return{
+            yearToSend: 0,
+            monthToSend: 0,
             isCurrentMonth: false,
             transaction: new Transaction(),
-            transactionList: []
+            transactionList: [],
+        }
+    },
+    computed: {
+        sortedTransList: function() {
+            function compare(a, b) {
+                if (a.id > b.id)
+                    return -1;
+                if (a.id < b.id)
+                    return 1;
+                return 0;
+            }
+            return this.transactionList.sort(compare);
         }
     },
     mounted()
     {
         this.getTransactionsForMonth();
+
+        console.log("sortedTransList:",this.sortedTransList);
+        console.log("transList:",this.transactionList);
     },
+    
     methods: 
     {
         createTransaction()
@@ -49,10 +68,10 @@ export default
             transactionService.crateTransaction(this.transaction)
                 .then(response=>
                 {
-                    this.transaction.data='';
+                    this.transaction.description='';
                     this.transaction.moneyspent='';
                     this.transactionList.push(response);
-                    alert('Created');
+                    this.$router.push({ name: 'TransactionView', params: {Month: this.monthToSend, Year: this.yearToSend }})
                 }).catch(error=>
                 {
                     alert(error);
@@ -62,10 +81,11 @@ export default
         {
             let monthToCheck = moment(Date.now()).format('M');
             let yearToCheck = moment(Date.now()).format('YYYY');
-            let yearToSend = this.$route.params.Year;
-            let monthToSend = this.$route.params.Month;
-            this.isCurrentMonth=(monthToCheck == monthToSend && yearToCheck == yearToSend);
-            transactionService.getTransactionsForMonth(monthToSend,yearToSend)
+            this.yearToSend = this.$route.params.Year;
+            this.monthToSend = this.$route.params.Month;
+            console.log("yearToSend: ",this.yearToSend, "   monthToSend: ",this.monthToSend);
+            this.isCurrentMonth=(monthToCheck == this.monthToSend && yearToCheck == this.yearToSend);
+            transactionService.getTransactionsForMonth(this.monthToSend,this.yearToSend)
                 .then(response=>
                 {
                     this.transactionList = response;
@@ -129,5 +149,8 @@ export default
     text-align: left;
     background-color: rgb(124, 124, 225);
     color: white;
+}
+#new-transaction {
+    width: 100%;
 }
 </style>

@@ -1,23 +1,25 @@
 <template>
     <div class="container-fluid">
-        
         <div class="centerOnMiddle">
-            
-                <select class="moveToLeft" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
+            <div>
+                <select class="move-lo-left" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
                     <option v-for="singleYear of allYears" :key="singleYear"> {{singleYear}} </option>
                 </select>
-            <div>
+            </div>
                 <table id="transactions">
                     <tr>
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                    <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="transactionList[index] != 0" @click="getTransactionsForMonth(index+1,selectedYear)">
-                        <td>{{ month_name }}</td>
-                        <td>{{ transactionList[index] }}</td>
-                    </tr>
+                        <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
+                            <td>{{ month_name }}</td>
+                            <td>{{ transactionList[index] }}</td>
+                        </tr>
+                        <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
+                            <td>{{ month_name }}</td>
+                            <td>{{ transactionList[index] }}</td>
+                        </tr>
                 </table>
-            </div>
         </div>
     </div>
 </template>
@@ -40,6 +42,7 @@ export default {
             yearToSend: '',
             monthToSend: '',
             month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            month_names_reversed: ['December', 'November', 'October', 'September', 'August', 'July', 'June', 'May', 'April', 'March', 'February', 'January'],
             transaction: new Transaction(),
             transactionList: []
         }
@@ -51,13 +54,17 @@ export default {
     },
     methods: 
     {
-        getTransactionsForYear(yearToSend)
-        {
+        isCurrentYear(value) {
+           return (this.selectedYear == moment(Date.now()).format('YYYY') && value != 0);
+        },
+        isNotCurrentYear(value) {
+           return (this.selectedYear != moment(Date.now()).format('YYYY') && value != 0);
+        },
+        getTransactionsForYear(yearToSend) {
             transactionService.getTransactionsForYear(yearToSend)
-                .then(response=>{
-                    console.log('trans list after response',response);
+                .then(response=> {
                     this.transactionList = response;
-                }).catch(error=>{
+                }).catch(error=> {
                     alert(error);
                 });
         },
@@ -83,38 +90,11 @@ export default {
 </script>
 
 <style scoped>
-.dropbtn 
-{
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
+.move-lo-left{
+    position:relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
-.dropdown
-{
-    position: relative;
-    display: inline-block;
-}
-.dropdown-content 
-{
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-.dropdown-content a 
-{
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-.dropdown-content a:hover {background-color: #ddd;}
-.dropdown:hover .dropdown-content {display: block;}
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
 .money-spent
 {
      text-align: center;
@@ -149,9 +129,6 @@ export default {
 
 #transactions tr:hover {background-color: rgb(190, 190, 255);}
 
-.moveToLeft{
-    margin-left:0%;
-}
 
 #transactions th 
 {

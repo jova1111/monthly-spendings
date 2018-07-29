@@ -49,7 +49,6 @@ export default {
         }
         let parsedToken = JSON.parse(savedToken);
         if(parsedToken.expireDate >= Date.now()){
-            console.log('Token valid')
             return true;
         }
         console.log('Token expired')

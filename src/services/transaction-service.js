@@ -78,7 +78,6 @@ export default
                 let yearList = [];
 
                 yearList.push(response.data);
-                console.log('yearList',yearList);
                 resolve(yearList);
             })
             .catch((error)=> 
@@ -107,15 +106,12 @@ export default
             })
             .then((response)=> 
             {
-                console.log('server response',response)
                 let transList = [];
                 let spentPerMonth = 0;
                 for (let i=1; i<13; i++)
                 {
                     for (let transObj of response.data)
                     {
-                        console.log('response.data',transObj);
-                        console.log('year of transaction', moment(transObj.created_at).format('YYYY'))
                         if (i == moment(transObj.created_at).format('M') && yearToSend == moment(transObj.created_at).format('YYYY'))
                         {
                             spentPerMonth += transObj.moneyspent;
