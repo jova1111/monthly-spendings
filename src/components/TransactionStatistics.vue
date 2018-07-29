@@ -75,6 +75,7 @@ export default {
                 }).catch(error=>
                 {
                     alert(error);
+                    this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});
                 });
         }
     }

@@ -9,7 +9,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.post(requestUrl+'api/transactions',transaction, 
+            axios.post(requestUrl+'transactions',transaction, 
             {
                 headers: 
                 {
@@ -23,7 +23,7 @@ export default
             })
             .catch((error)=> 
             {
-                reject('Ne mozes tako napraviti to');
+                reject(error);
             });
         })
     },
@@ -33,7 +33,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'api/view/transactions',
+            axios.get(requestUrl+'view/transactions',
             {
                 params: 
                 {
@@ -56,7 +56,7 @@ export default
             })
             .catch((error)=> 
             {
-                reject('Nema podataka za tebe :)');
+                reject(error);
             });
         })
     },
@@ -66,7 +66,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'api/transactions/getYears',
+            axios.get(requestUrl+'transactions/getYears',
             {
                 headers: 
                 {
@@ -83,7 +83,7 @@ export default
             })
             .catch((error)=> 
             {
-                reject('Nema godina, backend ne da :)');
+                reject(error);
             });
         })
     },
@@ -93,7 +93,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'api/transactions',
+            axios.get(requestUrl+'transactions',
             {
                 params: 
                 {
@@ -128,7 +128,7 @@ export default
             })
             .catch((error)=> 
             {
-                reject('Nema podataka za tebe :)');
+                reject(error);
             });
         })
     }
