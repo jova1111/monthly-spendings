@@ -7,5 +7,8 @@ const lockedPagesForUser = [
     '/login',
     '/register',
 ]
+const requestUrl = [
+    'https://wukshas-monthly-spendings-back.herokuapp.com/'
+]
 
-export {lockedPaguesForGuest, lockedPagesForUser}
+export {lockedPaguesForGuest, lockedPagesForUser, requestUrl}

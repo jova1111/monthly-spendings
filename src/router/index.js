@@ -6,6 +6,7 @@ import Register from '@/components/Register'
 import Transactions from '@/components/TransactionStatistics'
 import { lockedPaguesForGuest } from '../constants/const'
 import { lockedPagesForUser } from '../constants/const'
+import { requestUrl } from '../constants/const'
 import authService from '../services/auth-service'
 import TransactionView from '@/components/TransactionView'
 

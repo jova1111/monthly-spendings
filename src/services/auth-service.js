@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import { requestUrl } from '../constants/const'
 
 export default {
 
@@ -15,7 +15,7 @@ export default {
     login(user){
         return new Promise((resolve, reject)=>{
             console.log(user);
-            axios.post('http://localhost:8000/api/login',user)
+            axios.post(requestUrl+'api/login',user)
             .then((response)=> {
                 this.saveToken(response.data);
                 resolve(response.data);
@@ -30,7 +30,7 @@ export default {
     register(user){
         return new Promise((resolve, reject)=>{
             console.log(user);
-            axios.post('http://localhost:8000/api/register',user)
+            axios.post(requestUrl+'api/register',user)
             .then((response)=> {
                 resolve(response.data);
             })

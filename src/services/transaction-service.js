@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Transaction } from '../models/transaction';
+import { Transaction } from '../models/transaction'
+import { requestUrl } from '../constants/const'
 import moment from 'moment'
 export default 
 {
@@ -8,7 +9,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.post('http://localhost:8000/api/transactions',transaction, 
+            axios.post(requestUrl+'api/transactions',transaction, 
             {
                 headers: 
                 {
@@ -32,7 +33,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get('http://localhost:8000/api/view/transactions',
+            axios.get(requestUrl+'api/view/transactions',
             {
                 params: 
                 {
@@ -65,7 +66,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get('http://localhost:8000/api/transactions/getYears',
+            axios.get(requestUrl+'api/transactions/getYears',
             {
                 headers: 
                 {
@@ -92,7 +93,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get('http://localhost:8000/api/transactions',
+            axios.get(requestUrl+'api/transactions',
             {
                 params: 
                 {
