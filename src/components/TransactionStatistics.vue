@@ -27,6 +27,7 @@ import transactionService from '../services/transaction-service'
 import {Transaction} from '../models/transaction'
 import moment from 'moment'
 import VueRouter from 'vue-router'
+
 export default {
     name: 'TransactionView',
     props: ['Year','Month'],

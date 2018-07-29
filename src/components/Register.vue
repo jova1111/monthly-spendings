@@ -28,6 +28,7 @@
 <script>
 import authService from '../services/auth-service'
 import {User} from '../models/user'
+import { requestUrl } from '../constants/const'
 export default {
     name: 'Register',
     data(){
@@ -37,6 +38,7 @@ export default {
     },
     methods: {
         register(){
+            console.log(requestUrl);
             authService.register(this.user)
                 .then(response=>{
                     console.log(response);
