@@ -9,7 +9,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.post(requestUrl+'transactions',transaction, 
+            axios.post(requestUrl+'/transactions',transaction, 
             {
                 headers: 
                 {
@@ -33,7 +33,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'view/transactions',
+            axios.get(requestUrl+'/view/transactions',
             {
                 params: 
                 {
@@ -66,7 +66,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'transactions/getYears',
+            axios.get(requestUrl+'/transactions/getYears',
             {
                 headers: 
                 {
@@ -93,7 +93,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'transactions',
+            axios.get(requestUrl+'/transactions',
             {
                 params: 
                 {
