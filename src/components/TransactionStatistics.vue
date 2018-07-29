@@ -50,7 +50,7 @@ export default {
     mounted()
     {
         this.selectedYear = moment(Date.now()).format('YYYY');
-        this.getTransactionsForYear(selectedYear);
+        this.getTransactionsForYear(this.selectedYear);
         this.getAllYears();
     },
     methods: 
