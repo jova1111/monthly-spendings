@@ -78,7 +78,7 @@ export default
                 let yearList = [];
 
                 yearList.push(response.data);
-
+                console.log('yearList',yearList);
                 resolve(yearList);
             })
             .catch((error)=> 

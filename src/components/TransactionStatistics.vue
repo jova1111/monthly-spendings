@@ -70,6 +70,7 @@ export default {
             transactionService.getAllYears()
                 .then(response=>
                 {
+                    if (response.length == 1 && response[0]<2000) this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});
                     this.allYears=response[0];
                 }).catch(error=>
                 {
