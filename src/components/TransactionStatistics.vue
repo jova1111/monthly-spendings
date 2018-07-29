@@ -11,9 +11,9 @@
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                        <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[12-index])" @click="getTransactionsForMonth(12-index,selectedYear)">
-                            <td>{{ month_name }}</td>
-                            <td>{{ transactionList[12-index] }}</td>
+                        <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isCurrentYear(transactionList[12-index])" @click="getTransactionsForMonth(12-index,selectedYear)">
+                            <td>{{ month_names_reversed[index] }}</td>
+                            <td>{{ transactionList[index-12] }}</td>
                         </tr>
                         <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
                             <td>{{ month_name }}</td>
@@ -49,7 +49,8 @@ export default {
     },
     mounted()
     {
-        this.getTransactionsForYear(moment(Date.now()).format('YYYY'));
+        this.selectedYear = moment(Date.now()).format('YYYY');
+        this.getTransactionsForYear(selectedYear);
         this.getAllYears();
     },
     methods: 
