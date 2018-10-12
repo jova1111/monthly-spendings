@@ -11,7 +11,6 @@
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-<<<<<<< HEAD
                     <tr v-if="isCurrentYear(1)">
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
@@ -21,9 +20,6 @@
                         <td>{{ transactionList[11-index] }}</td>
                     </tr>
                     <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
-=======
-                    <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="transactionList[index] != 0" @click="getTransactionsForMonth(index+1,selectedYear)">
->>>>>>> 66bf7752cfbb9faf0998978a743472510fe15f22
                         <td>{{ month_name }}</td>
                         <td>{{ transactionList[index] }}</td>
                     </tr>
