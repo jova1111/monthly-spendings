@@ -11,14 +11,18 @@
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                        <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
-                            <td>{{ month_name }}</td>
-                            <td>{{ transactionList[index] }}</td>
-                        </tr>
-                        <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
-                            <td>{{ month_name }}</td>
-                            <td>{{ transactionList[index] }}</td>
-                        </tr>
+                    <tr v-if="isCurrentYear(1)">
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
+                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
+                    </tr>
+                    <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[11-index])" @click="getTransactionsForMonth(12-index,selectedYear)">
+                        <td>{{ month_name }}</td>
+                        <td>{{ transactionList[11-index] }}</td>
+                    </tr>
+                    <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
+                        <td>{{ month_name }}</td>
+                        <td>{{ transactionList[index] }}</td>
+                    </tr>
                 </table>
         </div>
     </div>
@@ -54,6 +58,20 @@ export default {
     },
     methods: 
     {
+        createTransaction()
+        {
+            transactionService.crateTransaction(this.transaction)
+                .then(response=>
+                {
+                    this.transaction.description='';
+                    this.transaction.moneyspent='';
+                    this.transactionList.push(response);
+                    this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: this.selectedYear }})
+                }).catch(error=>
+                {
+                    alert(error);
+                });
+        },
         isCurrentYear(value) {
            return (this.selectedYear == moment(Date.now()).format('YYYY') && value != 0);
         },

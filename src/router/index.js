@@ -8,6 +8,7 @@ import { lockedPaguesForGuest } from '../constants/const'
 import { lockedPagesForUser } from '../constants/const'
 import authService from '../services/auth-service'
 import TransactionView from '@/components/TransactionView'
+import CommunityMain from '@/components/CommunityMain'
 
 Vue.use(VueRouter)
 const router = new VueRouter(
@@ -40,6 +41,11 @@ const router = new VueRouter(
       name: 'TransactionView',
       props: true,
       component: TransactionView
+    },
+    {
+      path: '/community/main',
+      name: 'CommunityMain',
+      component: CommunityMain
     }
   ],
   mode: 'history'
