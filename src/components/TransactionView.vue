@@ -1,24 +1,39 @@
 <template>
-    <div class="container-fluid">
+    <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
                 <table id="transactions">
                     <tr>
                         <th class="transaction-date">Date</th>
                         <th class="description">Description</th>
+                        <th class="description">Category</th>
                         <th class="money-spent">Money spent</th>
                     </tr>
                     <tr id="new-transaction" v-if="isCurrentMonth">
                         <td>New transaction</td>
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
+                        <td>
+                            <select v-model="transaction.category.id">
+                                <option :value="-1" selected>No category</option>
+                                <option :value="category.id" v-bind:key="category.id" v-for="category in categories">{{ category.name }}</option> 
+                            </select>
+                            <button id="show-modal" @click="showNewCategoryModal = true">+</button>
+                        </td>
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
                     </tr>
                     <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id">
                         <td>{{transObj.date}}</td>
                         <td>{{transObj.description}}</td>
+                        <td v-if="transObj.category">{{ transObj.category.name }}</td>
+                        <td v-else>No category</td>
                         <td>{{transObj.moneyspent}}</td>
                     </tr>
+                    <tr>
+                        <td>Money spent:</td>
+                        <td colspan="3">{{ this.totalMoneySpent }}</td>
+                    </tr>
                 </table>
+                <category-form-modal v-if="showNewCategoryModal" @created="addCategoryFromModal" @close="showNewCategoryModal = false"></category-form-modal>
             </div>
         </div>
     </div>
@@ -28,17 +43,26 @@ import transactionService from '../services/transaction-service'
 import {Transaction} from '../models/transaction'
 import VueRouter from 'vue-router'
 import moment from 'moment'
+import CategoryForm from './CategoryForm'
+import categoryService from '../services/category-service'
+ 
 export default 
 {
+    components: {
+        'category-form-modal': CategoryForm
+    },
     name: 'TransactionView',
     data()
     {
-        return{
+        return {
             yearToSend: 0,
             monthToSend: 0,
             isCurrentMonth: false,
             transaction: new Transaction(),
             transactionList: [],
+            categories: [],
+            showNewCategoryModal: false,
+            isLoaded: false
         }
     },
     computed: {
@@ -51,12 +75,16 @@ export default
                 return 0;
             }
             return this.transactionList.sort(compare);
+        },
+
+        totalMoneySpent: function() {
+            return this.transactionList.map(transaction => transaction.moneyspent).reduce((a, b) => a + b, 0);
         }
     },
     mounted()
     {
         this.getTransactionsForMonth();
-
+        this.getCategories();
         console.log("sortedTransList:",this.sortedTransList);
         console.log("transList:",this.transactionList);
     },
@@ -66,7 +94,7 @@ export default
         createTransaction()
         {
             transactionService.crateTransaction(this.transaction)
-                .then(response=>
+                .then(response =>
                 {
                     this.transaction.description='';
                     this.transaction.moneyspent='';
@@ -93,6 +121,23 @@ export default
                 {
                     alert(error);
                 });
+        },
+
+        getCategories() {
+            categoryService.getAll()
+                .then(response => {
+                    this.categories = response;
+                    this.isLoaded = true;
+                })
+                .catch(error => {
+                    alert(error);
+                    this.isLoaded = true;
+                });
+        },
+
+        addCategoryFromModal(category) {
+            this.categories.push(category);
+            this.showNewCategoryModal = false;
         }
     }
 }
@@ -100,8 +145,8 @@ export default
 <style scoped>
 .transaction-date
 {
-    width: 120px;
-    max-width: 150px;
+    width: 160px;
+    max-width: 200px;
 }
 .money-spent
 {
@@ -111,12 +156,12 @@ export default
  }
 .description
 {
-    width: 80%;
+    width: 70%;
     min-width: 250px;
 }
 .centerOnMiddle
 {
-    width: 60%;
+    width: 80%;
     margin-left: auto;
     margin-right: auto;
     /*position: fixed;
