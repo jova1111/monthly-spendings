@@ -15,7 +15,7 @@ export default {
     login(user){
         return new Promise((resolve, reject)=>{
             console.log(user);
-            axios.post(requestUrl+'/login',user)
+            axios.post(requestUrl() + '/login',user)
             .then((response)=> {
                 this.saveToken(response.data);
                 resolve(response.data);
@@ -30,7 +30,7 @@ export default {
     register(user){
         return new Promise((resolve, reject)=>{
             console.log(user);
-            axios.post(requestUrl+'/register',user)
+            axios.post(requestUrl() + '/register',user)
             .then((response)=> {
                 resolve(response.data);
             })

@@ -9,7 +9,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.post(requestUrl+'/transactions',transaction, 
+            axios.post(requestUrl() + '/transactions',transaction, 
             {
                 headers: 
                 {
@@ -31,7 +31,7 @@ export default
     delete(id) {
         return new Promise((resolve, reject) => {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.delete(requestUrl + '/transactions/' + id, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
+            axios.delete(requestUrl() + '/transactions/' + id, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
                 .then(response => {
                     resolve(response.data);
                 })
@@ -46,7 +46,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'/view/transactions',
+            axios.get(requestUrl() + '/view/transactions',
             {
                 params: 
                 {
@@ -79,7 +79,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'/transactions/getYears',
+            axios.get(requestUrl() + '/transactions/getYears',
             {
                 headers: 
                 {
@@ -105,7 +105,7 @@ export default
         return new Promise((resolve, reject)=>
         {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl+'/transactions',
+            axios.get(requestUrl() + '/transactions',
             {
                 params: 
                 {
@@ -144,7 +144,7 @@ export default
     getMoneyPerMonth(month, year) {
         return new Promise((resolve, reject) => {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl + '/transactions/money_per_month', { 
+            axios.get(requestUrl() + '/transactions/money_per_month', { 
                 params: { 
                     Year: year ,
                     Month: month
@@ -163,7 +163,7 @@ export default
     editMoneyPerMonth(value) {
         return new Promise((resolve, reject) => {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.put(requestUrl + '/transactions/money_per_month', { value }, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
+            axios.put(requestUrl() + '/transactions/money_per_month', { value }, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
                 .then(response => {
                     resolve(response.data);
                 })
