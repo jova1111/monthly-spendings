@@ -2,7 +2,7 @@
     <transition name="modal">
     <div class="modal-mask">
       <div class="modal-wrapper">
-        <div v-if="isLoading" class="modal-container">
+        <div v-if="!isLoading" class="modal-container">
 
           <div class="modal-header">
             <slot name="header">
@@ -23,6 +23,7 @@
             </slot>
           </div>
         </div>
+        <spinner v-else></spinner>
       </div>
     </div>
   </transition>
@@ -40,7 +41,7 @@
         data() {
             return {
                 categoryName: '',
-                isLoading: ''
+                isLoading: false
             }
         },
 
@@ -53,6 +54,7 @@
                         this.$emit('created', createdCategory);
                     })
                     .catch(error => {
+                        this.isLoading = false;
                         alert(error);
                     })
             }

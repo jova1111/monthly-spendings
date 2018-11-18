@@ -3,7 +3,7 @@
         <div class="centerOnMiddle">
             <div>
                 <table class="transactions">
-                    <tr>
+                    <tr class="tableHeader">
                         <th class="transaction-date">Date</th>
                         <th class="description">Description</th>
                         <th class="description">Category</th>
@@ -33,7 +33,7 @@
                 <category-form-modal v-if="showNewCategoryModal" @created="addCategoryFromModal" @close="showNewCategoryModal = false"></category-form-modal>
                 <br>
                 <table class="transactions centerOnMiddle">
-                    <tr>
+                    <tr class="tableHeader">
                         <th>Category</th>
                         <th>Money spent</th>
                     </tr>
@@ -44,16 +44,16 @@
                 </table>
                 <br>
                 <table class="transactions centerOnMiddle">
-                    <tr>
+                    <tr class="tableHeader">
                         <th>Money to spend</th>
                         <th>Money spent</th>
                         <th>Money left</th>
                     </tr>
                     <tr>
-                        <td @click="editingMoneyToSpend = true" v-if="!editingMoneyToSpend">{{ moneyToSpend }}</td>
-                        <td v-else @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" placeholder="Enter value..." class="form-control smallFormControl"></td>
-                        <td>{{ totalMoneySpent }}</td>
-                        <td>{{ moneyLeft }}</td>
+                        <td style="cursor:pointer" @click="editingMoneyToSpend = true" v-if="!editingMoneyToSpend"><a>{{ moneyToSpend }}</a></td>
+                        <td v-else @keyup.esc="returnOldMoneyToSpend" @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" placeholder="Enter value..." class="form-control smallFormControl"></td>
+                        <td>{{ totalMoneySpent }}</td> 
+                        <td>{{ moneyToSpend - totalMoneySpent }}</td>
                     </tr>
                 </table>
             </div>
@@ -91,7 +91,9 @@ export default
             areCategoriesLoaded: false,
             isMoneyToSpendLoaded: false,
             moneyToSpend: 0,
-            editingMoneyToSpend: 0
+            editingMoneyToSpend: false,
+            savedMoneyToSpend: 0
+
         }
     },
     computed: {
@@ -131,10 +133,6 @@ export default
             }, {});
             console.log('result', result)
             return result;
-        },
-
-        moneyLeft: function() {
-            return this.moneyToSpend - this.totalMoneySpent >= 0 ? this.moneyToSpend - this.totalMoneySpent : 0
         },
 
         isLoaded: {
@@ -179,6 +177,7 @@ export default
                 }).catch(error=>
                 {
                     alert(error);
+                    this.areTransactionsLoaded = true;
                 });
         },
 
@@ -194,6 +193,7 @@ export default
                 })
                 .catch(error => {
                     alert(error);
+                    this.areTransactionsLoaded = true;
                 });
         },
 
@@ -245,19 +245,16 @@ export default
             transactionService.getMoneyPerMonth(this.monthToSend, this.yearToSend)
                 .then(value => {
                     this.moneyToSpend = value;
+                    this.savedMoneyToSpend = value;
                     this.isMoneyToSpendLoaded = true;
                 })
                 .catch(error => {
                     alert(error);
+                    this.isMoneyToSpendLoaded = true;
                 })
         },
 
         editMoneyToSpend() {
-            if(this.moneyToSpend == 0) {
-                this.editingMoneyToSpend = false;
-                return;
-            }
-
             this.isMoneyToSpendLoaded = false;
 
             transactionService.editMoneyPerMonth(this.moneyToSpend)
@@ -267,7 +264,13 @@ export default
                 })
                 .catch(error => {
                     alert(error);
+                    this.isMoneyToSpendLoaded = true;
                 });
+        },
+
+        returnOldMoneyToSpend() {
+            this.moneyToSpend = this.savedMoneyToSpend;
+            this.editingMoneyToSpend = false;                                                                                   
         }
     }
 }
@@ -315,16 +318,23 @@ export default
 .transactions tr:nth-child(odd){background-color: rgb(240, 240, 255);}
 .transactions tr:nth-child(even){background-color: rgb(222, 222, 255);}
 
+.transactions tr:first-child {background-color: rgb(124, 124, 225)}
+
 .transactions tr:hover {background-color: rgb(190, 190, 255);}
 
-.transactions th 
-{
+.tableHeader:hover {
+    background-color: rgb(100, 100, 200) !important;
+    cursor: pointer;
+}
+
+.tableHeader {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: rgb(124, 124, 225);
     color: white;
 }
+
 #new-transaction {
     width: 100%;
 }
