@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
                 <select class="move-lo-left" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
@@ -11,11 +11,7 @@
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                    <tr v-if="isCurrentYear(1)">
-                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
-                        <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
-                    </tr>
-                    <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[11-index])" @click="getTransactionsForMonth(12-index,selectedYear)">
+                    <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[11-index]) || isCurrentMonth(month_name)" @click="getTransactionsForMonth(12-index,selectedYear)">
                         <td>{{ month_name }}</td>
                         <td>{{ transactionList[11-index] }}</td>
                     </tr>
@@ -24,8 +20,10 @@
                         <td>{{ transactionList[index] }}</td>
                     </tr>
                 </table>
+
         </div>
     </div>
+    <spinner v-else></spinner>
 </template>
 
 <script>
@@ -33,8 +31,23 @@ import transactionService from '../services/transaction-service'
 import {Transaction} from '../models/transaction'
 import moment from 'moment'
 import VueRouter from 'vue-router'
+import LoadingSpinner from './LoadingSpinner'
 
 export default {
+    components: {
+        'spinner': LoadingSpinner
+    },
+    computed: {
+        isLoaded: {
+            set: function (newValue) {
+                return false;
+            },
+
+            get: function() {
+                return this.areTransactionsForYearLoaded && this.areAllYearsLoaded;
+            }
+        }
+    },
     name: 'TransactionView',
     props: ['Year','Month'],
     data()
@@ -48,7 +61,9 @@ export default {
             month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             month_names_reversed: ['December', 'November', 'October', 'September', 'August', 'July', 'June', 'May', 'April', 'March', 'February', 'January'],
             transaction: new Transaction(),
-            transactionList: []
+            transactionList: [],
+            areTransactionsForYearLoaded: false,
+            areAllYearsLoaded: false
         }
     },
     mounted()
@@ -73,8 +88,11 @@ export default {
                     alert(error);
                 });
         },
-        isCurrentYear(value) {
-           return (this.selectedYear == moment(Date.now()).format('YYYY') && value != 0);
+        isCurrentYear(moneySpent) {
+           return (this.selectedYear == moment(Date.now()).format('YYYY') && moneySpent != 0);
+        },
+        isCurrentMonth(currentMonthName) {
+            return (currentMonthName == moment(Date.now()).format('MMMM'));
         },
         isNotCurrentYear(value) {
            return (this.selectedYear != moment(Date.now()).format('YYYY') && value != 0);
@@ -83,6 +101,7 @@ export default {
             transactionService.getTransactionsForYear(yearToSend)
                 .then(response=> {
                     this.transactionList = response;
+                    this.areTransactionsForYearLoaded = true;
                 }).catch(error=> {
                     alert(error);
                 });
@@ -98,7 +117,9 @@ export default {
                 {
                     if (response.length == 1 && response[0]<2000) this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});
                     this.allYears=response[0];
-                }).catch(error=>
+                    this.areAllYearsLoaded = true;
+                })
+                .catch(error=>
                 {
                     alert(error);
                     this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});

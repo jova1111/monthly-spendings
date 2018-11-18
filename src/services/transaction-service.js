@@ -27,6 +27,19 @@ export default
             });
         })
     },
+    
+    delete(id) {
+        return new Promise((resolve, reject) => {
+            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+            axios.delete(requestUrl + '/transactions/' + id, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    },
 
     getTransactionsForMonth(indexM, indexY)
     {
@@ -98,7 +111,7 @@ export default
                 {
                     Year: yearToSend
                 }
-,              
+                ,              
                 headers: 
                 {
                     Authorization: 'Bearer ' + parsedToken.value
@@ -127,5 +140,36 @@ export default
                 reject(error);
             });
         })
+    },
+    getMoneyPerMonth(month, year) {
+        return new Promise((resolve, reject) => {
+            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+            axios.get(requestUrl + '/transactions/money_per_month', { 
+                params: { 
+                    Year: year ,
+                    Month: month
+                },
+                headers: { 
+                        Authorization: 'Bearer ' + parsedToken.value }
+                })
+                .then(response => {
+                    resolve(response.data.value);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    },
+    editMoneyPerMonth(value) {
+        return new Promise((resolve, reject) => {
+            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+            axios.put(requestUrl + '/transactions/money_per_month', { value }, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
     }
 }

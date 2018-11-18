@@ -2,7 +2,7 @@
     <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
-                <table id="transactions">
+                <table class="transactions">
                     <tr>
                         <th class="transaction-date">Date</th>
                         <th class="description">Description</th>
@@ -13,7 +13,7 @@
                         <td>New transaction</td>
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
                         <td>
-                            <select v-model="transaction.category.id">
+                            <select class="form-control smallFormControl" v-model="transaction.category.id">
                                 <option :value="-1" selected>No category</option>
                                 <option :value="category.id" v-bind:key="category.id" v-for="category in categories">{{ category.name }}</option> 
                             </select>
@@ -22,21 +22,44 @@
                         <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
                     </tr>
                     <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id">
-                        <td>{{transObj.date}}</td>
+                        <td>{{ transObj.date | toLocalDate }}</td>
                         <td>{{transObj.description}}</td>
                         <td v-if="transObj.category">{{ transObj.category.name }}</td>
                         <td v-else>No category</td>
                         <td>{{transObj.moneyspent}}</td>
-                    </tr>
-                    <tr>
-                        <td>Money spent:</td>
-                        <td colspan="3">{{ this.totalMoneySpent }}</td>
+                        <td><input type="button" value="x" @click="deleteTransaction(transObj.id)"></td>
                     </tr>
                 </table>
                 <category-form-modal v-if="showNewCategoryModal" @created="addCategoryFromModal" @close="showNewCategoryModal = false"></category-form-modal>
+                <br>
+                <table class="transactions centerOnMiddle">
+                    <tr>
+                        <th>Category</th>
+                        <th>Money spent</th>
+                    </tr>
+                    <tr v-for="categorySpending in categorySpendings" v-bind:key="categorySpending.name">
+                        <td>{{ categorySpending.name }}</td>
+                        <td>{{ categorySpending.total }}</td>
+                    </tr>
+                </table>
+                <br>
+                <table class="transactions centerOnMiddle">
+                    <tr>
+                        <th>Money to spend</th>
+                        <th>Money spent</th>
+                        <th>Money left</th>
+                    </tr>
+                    <tr>
+                        <td @click="editingMoneyToSpend = true" v-if="!editingMoneyToSpend">{{ moneyToSpend }}</td>
+                        <td v-else @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" class="form-control smallFormControl"></td>
+                        <td>{{ totalMoneySpent }}</td>
+                        <td>{{ moneyLeft }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
+
 </template>
 <script>
 import transactionService from '../services/transaction-service'
@@ -45,11 +68,13 @@ import VueRouter from 'vue-router'
 import moment from 'moment'
 import CategoryForm from './CategoryForm'
 import categoryService from '../services/category-service'
+import LoadingSpinner from './LoadingSpinner'
  
 export default 
 {
     components: {
-        'category-form-modal': CategoryForm
+        'category-form-modal': CategoryForm,
+        'spinner': LoadingSpinner
     },
     name: 'TransactionView',
     data()
@@ -62,7 +87,11 @@ export default
             transactionList: [],
             categories: [],
             showNewCategoryModal: false,
-            isLoaded: false
+            areTransactionsLoaded: false,
+            areCategoriesLoaded: false,
+            isMoneyToSpendLoaded: false,
+            moneyToSpend: 0,
+            editingMoneyToSpend: 0
         }
     },
     computed: {
@@ -79,12 +108,57 @@ export default
 
         totalMoneySpent: function() {
             return this.transactionList.map(transaction => transaction.moneyspent).reduce((a, b) => a + b, 0);
+        },
+
+        categorySpendings: function() {
+            let result = [];
+            this.transactionList.reduce(function (res, value) {
+                let categoryName;
+                if(!value.category) {
+                    categoryName = "No category";
+                } else {
+                    categoryName = value.category.name;
+                }
+                if (!res[categoryName]) {
+                    res[categoryName] = {
+                        total: 0,
+                        name: categoryName
+                    };
+                    result.push(res[categoryName]);
+                }
+                res[categoryName].total += value.moneyspent;
+                return res;
+            }, {});
+            console.log('result', result)
+            return result;
+        },
+
+        moneyLeft: function() {
+            return this.moneyToSpend - this.totalMoneySpent >= 0 ? this.moneyToSpend - this.totalMoneySpent : 0
+        },
+
+        isLoaded: {
+            set: function (newValue) {
+                return false;
+            },
+
+            get: function() {
+                return this.areTransactionsLoaded && this.areCategoriesLoaded && this.isMoneyToSpendLoaded;
+            }
+        }
+    },
+    filters: {
+        toLocalDate: function (value) {
+            if (!value) return ''
+            let date = new Date(value);
+            return date.toLocaleDateString('en-GB');
         }
     },
     mounted()
     {
         this.getTransactionsForMonth();
         this.getCategories();
+        this.getMoneyToSpend();
         console.log("sortedTransList:",this.sortedTransList);
         console.log("transList:",this.transactionList);
     },
@@ -105,18 +179,41 @@ export default
                     alert(error);
                 });
         },
+
+        deleteTransaction(id) {
+            if (!confirm('Are you sure you want to delete this transaction?')) {
+                return;
+            }
+            transactionService.delete(id)
+                .then(response => {
+                    this.transactionList = this.transactionList.filter(transaction => transaction.id != id);
+                })
+                .catch(error => {
+                    alert(error);
+                });
+        },
+
         getTransactionsForMonth()
         {
             let monthToCheck = moment(Date.now()).format('M');
             let yearToCheck = moment(Date.now()).format('YYYY');
-            this.yearToSend = this.$route.params.Year;
-            this.monthToSend = this.$route.params.Month;
+            if (!this.$route.params.Year || !this.$route.params.Month) {
+                this.yearToSend = localStorage.getItem('yearToSend');
+                this.monthToSend = localStorage.getItem('monthToSend');
+            } 
+            else {
+                this.yearToSend = this.$route.params.Year;
+                this.monthToSend = this.$route.params.Month;
+                localStorage.setItem('yearToSend', this.yearToSend);
+                localStorage.setItem('monthToSend', this.monthToSend);
+            }
             console.log("yearToSend: ",this.yearToSend, "   monthToSend: ",this.monthToSend);
             this.isCurrentMonth=(monthToCheck == this.monthToSend && yearToCheck == this.yearToSend);
             transactionService.getTransactionsForMonth(this.monthToSend,this.yearToSend)
-                .then(response=>
+                .then(response =>
                 {
                     this.transactionList = response;
+                    this.areTransactionsLoaded = true;
                 }).catch(error=>
                 {
                     alert(error);
@@ -127,17 +224,46 @@ export default
             categoryService.getAll()
                 .then(response => {
                     this.categories = response;
-                    this.isLoaded = true;
+                    this.areCategoriesLoaded = true;
                 })
                 .catch(error => {
                     alert(error);
-                    this.isLoaded = true;
+                    this.areCategoriesLoaded = true;
                 });
         },
 
         addCategoryFromModal(category) {
             this.categories.push(category);
             this.showNewCategoryModal = false;
+        },
+
+        getMoneyToSpend() {
+            let monthToCheck = moment(Date.now()).format('M');
+            let yearToCheck = moment(Date.now()).format('YYYY');
+
+            transactionService.getMoneyPerMonth(monthToCheck, yearToCheck)
+                .then(value => {
+                    this.moneyToSpend = value;
+                    this.isMoneyToSpendLoaded = true;
+                })
+                .catch(error => {
+                    alert(error);
+                })
+        },
+
+        editMoneyToSpend() {
+            if(this.moneyToSpend == 0) {
+                this.editingMoneyToSpend = false;
+                return;
+            }
+
+            transactionService.editMoneyPerMonth(this.moneyToSpend)
+                .then(succes => {
+                    this.editingMoneyToSpend = false;
+                })
+                .catch(error => {
+                    alert(error);
+                });
         }
     }
 }
@@ -169,25 +295,25 @@ export default
     /* bring your own prefixes 
     transform: translate(-50%, 0%);*/
 }
-#transactions 
+.transactions 
 {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
 }
 
-#transactions td, #transactions th 
+.transactions td, .transactions th 
 {
     border: 2px solid rgb(202, 202, 202);
     padding: 8px;
 }
 
-#transactions tr:nth-child(odd){background-color: rgb(240, 240, 255);}
-#transactions tr:nth-child(even){background-color: rgb(222, 222, 255);}
+.transactions tr:nth-child(odd){background-color: rgb(240, 240, 255);}
+.transactions tr:nth-child(even){background-color: rgb(222, 222, 255);}
 
-#transactions tr:hover {background-color: rgb(190, 190, 255);}
+.transactions tr:hover {background-color: rgb(190, 190, 255);}
 
-#transactions th 
+.transactions th 
 {
     padding-top: 12px;
     padding-bottom: 12px;
@@ -197,5 +323,16 @@ export default
 }
 #new-transaction {
     width: 100%;
+}
+
+.hiddenField {
+    background-color: white !important;
+    border-left: 0px solid white !important;
+    border-bottom: 0px solid white !important
+}
+
+.smallFormControl {
+    display: inline;
+    width: 200px;
 }
 </style>
