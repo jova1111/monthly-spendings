@@ -51,7 +51,7 @@
                     </tr>
                     <tr>
                         <td @click="editingMoneyToSpend = true" v-if="!editingMoneyToSpend">{{ moneyToSpend }}</td>
-                        <td v-else @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" class="form-control smallFormControl"></td>
+                        <td v-else @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" placeholder="Enter value..." class="form-control smallFormControl"></td>
                         <td>{{ totalMoneySpent }}</td>
                         <td>{{ moneyLeft }}</td>
                     </tr>
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-
+    <spinner v-else></spinner>
 </template>
 <script>
 import transactionService from '../services/transaction-service'
@@ -167,13 +167,15 @@ export default
     {
         createTransaction()
         {
+            this.areTransactionsLoaded = false;
             transactionService.crateTransaction(this.transaction)
                 .then(response =>
                 {
                     this.transaction.description='';
                     this.transaction.moneyspent='';
                     this.transactionList.push(response);
-                    this.$router.push({ name: 'TransactionView', params: {Month: this.monthToSend, Year: this.yearToSend }})
+                    this.$router.push({ name: 'TransactionView', params: {Month: this.monthToSend, Year: this.yearToSend }});
+                    this.areTransactionsLoaded = true;
                 }).catch(error=>
                 {
                     alert(error);
@@ -184,9 +186,11 @@ export default
             if (!confirm('Are you sure you want to delete this transaction?')) {
                 return;
             }
+            this.areTransactionsLoaded = false;
             transactionService.delete(id)
                 .then(response => {
                     this.transactionList = this.transactionList.filter(transaction => transaction.id != id);
+                    this.areTransactionsLoaded = true;
                 })
                 .catch(error => {
                     alert(error);
@@ -254,9 +258,12 @@ export default
                 return;
             }
 
+            this.isMoneyToSpendLoaded = false;
+
             transactionService.editMoneyPerMonth(this.moneyToSpend)
                 .then(succes => {
                     this.editingMoneyToSpend = false;
+                    this.isMoneyToSpendLoaded = true;
                 })
                 .catch(error => {
                     alert(error);

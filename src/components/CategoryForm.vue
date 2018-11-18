@@ -2,7 +2,7 @@
     <transition name="modal">
     <div class="modal-mask">
       <div class="modal-wrapper">
-        <div class="modal-container">
+        <div v-if="isLoading" class="modal-container">
 
           <div class="modal-header">
             <slot name="header">
@@ -30,19 +30,26 @@
 
 <script>
     import categoryService from '../services/category-service';
+    import LoadingSpinner from './LoadingSpinner';
 
     export default {
+        components: {
+            'spinner': LoadingSpinner
+        },
         name: 'category-form-modal',
         data() {
             return {
-                categoryName: ''
+                categoryName: '',
+                isLoading: ''
             }
         },
 
         methods: {
             addCategory() {
+                this.isLoading = true;
                 categoryService.create(this.categoryName)
                     .then(createdCategory => {
+                        this.isLoading = false;
                         this.$emit('created', createdCategory);
                     })
                     .catch(error => {
