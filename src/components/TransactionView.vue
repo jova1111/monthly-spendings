@@ -238,10 +238,7 @@ export default
         },
 
         getMoneyToSpend() {
-            let monthToCheck = moment(Date.now()).format('M');
-            let yearToCheck = moment(Date.now()).format('YYYY');
-
-            transactionService.getMoneyPerMonth(monthToCheck, yearToCheck)
+            transactionService.getMoneyPerMonth(this.monthToSend, this.yearToSend)
                 .then(value => {
                     this.moneyToSpend = value;
                     this.isMoneyToSpendLoaded = true;
