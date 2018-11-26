@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div v-if="!isLoading" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
                 <form action="/login.php">
@@ -16,25 +16,35 @@
             </div>
         </div>
     </div>
+    <spinner v-else></spinner>
 </template>
 <script>
 import authService from '../services/auth-service'
 import {User} from '../models/user'
+import LoadingSpinner from './LoadingSpinner'
+
 export default {
+    components: {
+        'spinner': LoadingSpinner
+    },
     name: 'Login',
     data(){
         return {
-            user: new User()
+            user: new User(),
+            isLoading: false
         }
     },
     methods: {
         login(){
+            this.isLoading = true;
             authService.login(this.user)
                 .then(response=>{
                     console.log(response);
                     this.$router.push('/');
+                    this.isLoading = false;
                 }).catch(error=>{
                     console.log(error);
+                    this.isLoading = false;
                 });
         } 
     },
