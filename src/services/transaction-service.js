@@ -4,7 +4,7 @@ import { requestUrl } from '../constants/const'
 import moment from 'moment'
 export default 
 {
-    crateTransaction(transaction)
+    createTransaction(transaction)
     {
         return new Promise((resolve, reject)=>
         {
