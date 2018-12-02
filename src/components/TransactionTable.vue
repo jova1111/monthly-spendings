@@ -1,30 +1,32 @@
 <template>
     <div>
         <table class="transactions">
-            <tr class="table-header">
+            <tr class="table-header" @click="visible = !visible">
                 <th class="transaction-date">Date</th>
                 <th class="description">Description</th>
                 <th class="description">Category</th>
                 <th class="money-spent">Money spent</th>
             </tr>
-            <tr id="new-transaction" v-if="showActionControls">
+            <tr id="new-transaction" v-if="showActionControls && visible">
                 <td>New transaction</td>
-                <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction" v-model="transaction.description"></td>
+                <td><input ref="descriptionInput" v-autofocus @keyup.enter="createTransaction" type="text" class="form-control" placeholder="Description of new transaction..." v-model="transaction.description"></td>
                 <td>
-                    <select class="form-control small-form-control" v-model="transaction.category.id">
-                        <option :value="-1" selected>No category</option>
-                        <option :value="category.id" v-bind:key="category.id" v-for="category in categoryList">{{ category.name }}</option> 
-                    </select>
-                    <button id="show-modal" @click="showNewCategoryModal = true">+</button>
+                    <div class="category-container">
+                        <model-select class="inline" :options="categoryValues"
+                                    v-model="transaction.category.id"
+                                    placeholder="Select item...">
+                        </model-select>
+                        <button id="show-modal" class="violet" @click="showNewCategoryModal = true">+</button>
+                    </div>
                 </td>
                 <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
             </tr>
-            <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id">
+            <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id" v-if="visible">
                 <td>{{ transObj.date | toLocalDate }}</td>
                 <td>{{ transObj.description }}</td>
                 <td>{{ transObj.category.name }}</td>
                 <td>{{ transObj.moneyspent }}</td>
-                <td v-if="showActionControls"><input type="button" value="x" @click="deleteTransaction(transObj.id)"></td>
+                <td v-if="showActionControls"><input type="button" class="violet" value="x" @click="deleteTransaction(transObj.id)"></td>
             </tr>
         </table>
         <category-form-modal v-if="showNewCategoryModal" @created="addCategoryFromModal" @close="showNewCategoryModal = false"></category-form-modal>
@@ -36,6 +38,7 @@
     import LoadingSpinner from './LoadingSpinner';
     import CategoryForm from './CategoryForm';
     import { Transaction } from '../models/transaction';
+    import { ModelSelect } from 'vue-search-select';
 
     export default {
         filters: {
@@ -48,7 +51,8 @@
 
         components: {
             'category-form-modal': CategoryForm,
-            'spinner': LoadingSpinner
+            'spinner': LoadingSpinner,
+            'model-select': ModelSelect
         },
 
         props: {
@@ -72,6 +76,20 @@
                     return 0;
                 }
                 return this.transactionList.sort(compare);
+            },
+
+            categoryValues: function() {
+                let retVal = this.categories.map(category => {
+                    return {
+                        value: category.id,
+                        text: category.name
+                    }
+                });
+
+                retVal.unshift({ value: -1, text: 'No category'});
+
+                return retVal;
+                
             }
         },
 
@@ -81,7 +99,8 @@
                 transactionList: [],
                 isCurrentMonth: true,
                 isLoaded: false,
-                showNewCategoryModal: false
+                showNewCategoryModal: false,
+                visible: true
             }
         },
 
@@ -94,7 +113,8 @@
                         this.transaction.description='';
                         this.transaction.moneyspent='';
                         this.transactionList.push(response);
-                        this.$router.push({ name: 'TransactionView', params: {Month: this.monthToSend, Year: this.yearToSend }});
+                        this.$refs.descriptionInput.focus();
+                        this.$emit('updated',  this.transactionList);
                         this.isLoaded = true;
                     }).catch(error=>
                     {
@@ -110,6 +130,7 @@
                 transactionService.delete(id)
                     .then(response => {
                         this.transactionList = this.transactionList.filter(transaction => transaction.id != id);
+                        this.$emit('updated', this.transactionList);
                         this.isLoaded = true;
                     })
                     .catch(error => {
@@ -120,6 +141,8 @@
 
             addCategoryFromModal(category) {
                 this.categories.push(category);
+                this.transaction.category.id = category.id;
+                this.$refs.descriptionInput.focus();
                 this.showNewCategoryModal = false;
             }
         }
@@ -177,5 +200,21 @@
         text-align: center;
         width: 20%;
         min-width: 100px;
+    }
+
+    .violet {
+        background-color: rgb(124, 124, 225);
+        color: white;
+        border-radius: 35%;
+        border: 1px solid gray;
+    }
+
+    .category-container { 
+        display: flex;
+        justify-content: space-around;
+    }
+
+    #show-modal {
+        margin: 5px;
     }
 </style>

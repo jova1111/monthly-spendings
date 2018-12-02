@@ -18,7 +18,7 @@
 
                     <div class="modal-footer">
                         <slot name="footer">
-                            <button class="modal-default-button" @click="$emit('close')">Cancel</button>
+                            <button class="btn modal-default-button" @click="$emit('close')">Cancel</button>
                         </slot>
                     </div>
                 </div>

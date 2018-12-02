@@ -2,7 +2,7 @@
     <div v-if="isLoaded" class="container-fluid">
         <div>
             <div class="center-middle">
-                <transaction-table :categories="categories" :transactions="transactionList" :showActionControls="isCurrentMonth"></transaction-table>
+                <transaction-table :categories="categories" :transactions="transactionList" :showActionControls="isCurrentMonth" @updated="handleTransactionTableUpdate"></transaction-table>
                 <br>
                 <category-table :transactions="transactionList"></category-table>
                 <br>
@@ -90,13 +90,6 @@
                     .then(response =>
                     {
                         this.transactionList = response;
-                        this.transactionList.forEach(transaction => {
-                            if(transaction.category == null) {
-                                transaction.category = {
-                                    name: 'No category'
-                                }
-                            }
-                        });
                         this.areTransactionsLoaded = true;
                     }).catch(error=>
                     {
@@ -125,6 +118,9 @@
                         alert(error);
                         this.isMoneyToSpendLoaded = true;
                     })
+            },
+            handleTransactionTableUpdate(transactionList) {
+                this.transactionList = transactionList;
             }
         }
     }

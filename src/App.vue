@@ -12,6 +12,7 @@
 <script>
 import authService from '@/services/auth-service'
 import VueRouter from 'vue-router'
+
 export default {
   name: 'App',
   data()

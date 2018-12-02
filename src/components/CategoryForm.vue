@@ -12,14 +12,14 @@
 
                     <div class="modal-body">
                         <slot name="body">
-                            <input type="text" v-model="categoryName" placeholder="Name of category">
+                            <input v-autofocus class="form-control" type="text" v-model="categoryName" placeholder="Name of category">
                         </slot>
                     </div>
 
                     <div class="modal-footer">
                         <slot name="footer">
-                        <input type="button" @click="addCategory()" class="modal-default-button" value="Create">
-                        <button class="modal-default-button" @click="$emit('close')">Cancel</button>
+                        <input type="button" @click="addCategory()" class="btn violet modal-default-button" value="Create">
+                        <button class="btn modal-default-button" @click="$emit('close')">Cancel</button>
                         </slot>
                     </div>
                 </div>
@@ -103,6 +103,7 @@
 
     .modal-default-button {
         float: right;
+        margin-left: 10px;
     }
 
     /*
@@ -126,5 +127,10 @@
     .modal-leave-active .modal-container {
         -webkit-transform: scale(1.1);
         transform: scale(1.1);
+    }
+
+    .violet {
+        background-color: rgb(124, 124, 225);
+        color: white
     }
 </style>

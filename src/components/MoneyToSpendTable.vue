@@ -8,7 +8,7 @@
             </tr>
             <tr>
                 <td style="cursor:pointer" @click="editable ? editing = true : editing = false" v-if="!editing"><a>{{ moneyToSpend }}</a></td>
-                <td v-else @keyup.esc="returnOldMoneyToSpend" @keyup.enter="editMoneyToSpend"><input type="text" v-model="moneyToSpend" placeholder="Enter value..." class="form-control small-form-control"></td>
+                <td v-else @keyup.esc="returnOldMoneyToSpend" @keyup.enter="editMoneyToSpend"><input v-autofocus type="text" v-model="moneyToSpend" placeholder="Enter value..." class="form-control small-form-control"></td>
                 <td>{{ totalMoneySpent }}</td> 
                 <td>{{ moneyToSpend - totalMoneySpent }}</td>
             </tr>
