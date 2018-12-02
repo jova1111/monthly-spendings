@@ -56,8 +56,6 @@ export default {
             selectedYear:2018,
             allYears: [],
             singleYear: '',
-            yearToSend: '',
-            monthToSend: '',
             month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             month_names_reversed: ['December', 'November', 'October', 'September', 'August', 'July', 'June', 'May', 'April', 'March', 'February', 'January'],
             transaction: new Transaction(),
@@ -74,20 +72,6 @@ export default {
     },
     methods: 
     {
-        createTransaction()
-        {
-            transactionService.crateTransaction(this.transaction)
-                .then(response=>
-                {
-                    this.transaction.description='';
-                    this.transaction.moneyspent='';
-                    this.transactionList.push(response);
-                    this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: this.selectedYear }})
-                }).catch(error=>
-                {
-                    alert(error);
-                });
-        },
         isCurrentYear(moneySpent) {
            return (this.selectedYear == moment(Date.now()).format('YYYY') && moneySpent != 0);
         },

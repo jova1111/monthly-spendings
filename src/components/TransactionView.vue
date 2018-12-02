@@ -12,6 +12,7 @@
     </div>
     <spinner v-else></spinner>
 </template>
+
 <script>
 
     import transactionService from '../services/transaction-service'
@@ -89,6 +90,13 @@
                     .then(response =>
                     {
                         this.transactionList = response;
+                        this.transactionList.forEach(transaction => {
+                            if(transaction.category == null) {
+                                transaction.category = {
+                                    name: 'No category'
+                                }
+                            }
+                        });
                         this.areTransactionsLoaded = true;
                     }).catch(error=>
                     {

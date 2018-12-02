@@ -5,30 +5,33 @@
                 <th>Category</th>
                 <th>Money spent</th>
             </tr>
-            <tr v-for="categorySpending in categorySpendings" v-bind:key="categorySpending.name">
+            <tr v-for="categorySpending in categorySpendings" v-bind:key="categorySpending.name" @click="showTransactionsForCategory(categorySpending.name)">
                 <td>{{ categorySpending.name }}</td>
                 <td>{{ categorySpending.total }}</td>
             </tr>
         </table>
+        <category-transactions v-if="showTransactionsModal" :categoryName="categoryName" :transactions="transactions" @close="showTransactionsModal = false"></category-transactions>
     </div>
 </template>
 
 <script>
+    import TransactionModal from './TransactionModal';
+
     export default {
         props: [
             'transactions'
         ],
 
+        components: {
+            'category-transactions': TransactionModal
+        },
+
         computed: {
             categorySpendings: function() {
                 let result = [];
                 this.transactions.reduce(function (res, value) {
-                    let categoryName;
-                    if(!value.category) {
-                        categoryName = "No category";
-                    } else {
-                        categoryName = value.category.name;
-                    }
+                    let categoryName = value.category.name;
+                    
                     if (!res[categoryName]) {
                         res[categoryName] = {
                             total: 0,
@@ -40,6 +43,20 @@
                     return res;
                 }, {});
                 return result;
+            }
+        },
+
+        data() {
+            return {
+                categoryName: '',
+                showTransactionsModal: false
+            }
+        },
+
+        methods: {
+            showTransactionsForCategory(categoryName) {
+                this.categoryName = categoryName;
+                this.showTransactionsModal = true;
             }
         }
     }
@@ -63,7 +80,10 @@
 
     .transactions tr:first-child {background-color: rgb(124, 124, 225)}
 
-    .transactions tr:hover {background-color: rgb(190, 190, 255);}
+    .transactions tr:hover {
+        background-color: rgb(190, 190, 255);
+        cursor: pointer;
+    }
 
     .table-header:hover {
         background-color: rgb(100, 100, 200) !important;

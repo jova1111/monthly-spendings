@@ -21,10 +21,9 @@
             </tr>
             <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id">
                 <td>{{ transObj.date | toLocalDate }}</td>
-                <td>{{transObj.description}}</td>
-                <td v-if="transObj.category">{{ transObj.category.name }}</td>
-                <td v-else>No category</td>
-                <td>{{transObj.moneyspent}}</td>
+                <td>{{ transObj.description }}</td>
+                <td>{{ transObj.category.name }}</td>
+                <td>{{ transObj.moneyspent }}</td>
                 <td v-if="showActionControls"><input type="button" value="x" @click="deleteTransaction(transObj.id)"></td>
             </tr>
         </table>

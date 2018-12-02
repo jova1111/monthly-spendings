@@ -2,66 +2,63 @@
     <transition name="modal">
         <div class="modal-mask">
             <div class="modal-wrapper">
-                <div v-if="!isLoading" class="modal-container">
+                <div class="modal-container">
 
                     <div class="modal-header">
                         <slot name="header">
-                            New category
+                            Transactions for category: {{ category }}
                         </slot>
                     </div>
 
                     <div class="modal-body">
                         <slot name="body">
-                            <input type="text" v-model="categoryName" placeholder="Name of category">
+                            <transaction-table :transactions="filteredTransactions" :showActionControls="false"></transaction-table>
                         </slot>
                     </div>
 
                     <div class="modal-footer">
                         <slot name="footer">
-                        <input type="button" @click="addCategory()" class="modal-default-button" value="Create">
-                        <button class="modal-default-button" @click="$emit('close')">Cancel</button>
+                            <button class="modal-default-button" @click="$emit('close')">Cancel</button>
                         </slot>
                     </div>
                 </div>
-                <spinner v-else></spinner>
             </div>
         </div>
   </transition>
 </template>
 
 <script>
-    import categoryService from '../services/category-service';
-    import LoadingSpinner from './LoadingSpinner';
+    import TransactionTable from './TransactionTable';
 
     export default {
-        components: {
-            'spinner': LoadingSpinner
-        },
-        name: 'category-form-modal',
-        data() {
-            return {
-                categoryName: '',
-                isLoading: false
+        computed: {
+            filteredTransactions() {
+                return this.transactionList.filter(transaction => transaction.category.name == this.category)
             }
         },
 
-        methods: {
-            addCategory() {
-                this.isLoading = true;
-                categoryService.create(this.categoryName)
-                    .then(createdCategory => {
-                        this.isLoading = false;
-                        this.$emit('created', createdCategory);
-                    })
-                    .catch(error => {
-                        this.isLoading = false;
-                        alert(error);
-                    })
+        components: {
+            'transaction-table': TransactionTable
+        },
+
+        props: {
+            "categoryName": String,
+            "transactions": Array
+        },
+
+        data() {
+            return {
+                category: '',
+                transactionList: []
             }
+        },
+
+        created() {
+            this.category = this.categoryName;
+            this.transactionList = this.transactions;
         }
     }
 </script>
-
 
 <style scoped>
     .modal-mask {
@@ -82,7 +79,11 @@
     }
 
     .modal-container {
-        width: 300px;
+        display: flex;
+        vertical-align: middle;
+        flex-direction: column;
+        width: 85%;
+        height: 600px;
         margin: 0px auto;
         padding: 20px 30px;
         background-color: #fff;
@@ -99,6 +100,8 @@
 
     .modal-body {
         margin: 20px 0;
+        overflow: scroll;
+        height: 95%;
     }
 
     .modal-default-button {
@@ -128,3 +131,4 @@
         transform: scale(1.1);
     }
 </style>
+
