@@ -34,9 +34,10 @@
 
         data() {
             return {
-                isLoaded: true,
                 editing: false,
                 moneyToSpend: 0,
+                processStartEventName: 'started-processing',
+                processFinishEventName: 'finished-processing'
             }
         },
 
@@ -46,16 +47,16 @@
 
         methods: {
             editMoneyToSpend() {
-                this.isLoaded = false;
+                this.$emit(this.processStartEventName);
 
                 transactionService.editMoneyPerMonth(this.moneyToSpend)
                     .then(succes => {
                         this.editing = false;
-                        this.isLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     })
                     .catch(error => {
                         alert(error);
-                        this.isMoneyToSpendLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     });
             },
 

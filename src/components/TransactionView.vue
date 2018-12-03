@@ -1,16 +1,31 @@
 <template>
-    <div v-if="isLoaded" class="container-fluid">
-        <div>
-            <div class="center-middle">
-                <transaction-table :categories="categories" :transactions="transactionList" :showActionControls="isCurrentMonth" @updated="handleTransactionTableUpdate"></transaction-table>
-                <br>
-                <category-table :transactions="transactionList"></category-table>
-                <br>
-                <money-to-spend-table :transactions="transactionList" :editable="isCurrentMonth" :money="moneyToSpend"></money-to-spend-table>
+    <div>
+        <div v-if="isLoaded" :class="{ hidden: isLoading }">
+            <div>
+                <div class="center-middle">
+                    <transaction-table 
+                        :categories="categories" 
+                        :transactions="transactionList" 
+                        :showActionControls="isCurrentMonth" 
+                        @started-processing="isLoading = true" 
+                        @finished-processing="isLoading = false" 
+                        @updated="handleTransactionTableUpdate">
+                    </transaction-table>
+                    <br>
+                    <category-table :transactions="transactionList"></category-table>
+                    <br>
+                    <money-to-spend-table 
+                        :transactions="transactionList" 
+                        :editable="isCurrentMonth" 
+                        :money="moneyToSpend"
+                        @started-processing="isLoading = true" 
+                        @finished-processing="isLoading = false">
+                    </money-to-spend-table>
+                </div>
             </div>
         </div>
+        <spinner v-if="!isLoaded || isLoading"></spinner>
     </div>
-    <spinner v-else></spinner>
 </template>
 
 <script>
@@ -45,7 +60,8 @@
                 categories: [],
                 areTransactionsLoaded: false,
                 areCategoriesLoaded: false,
-                isMoneyToSpendLoaded: false
+                isMoneyToSpendLoaded: false,
+                isLoading: false
             }
         },
 
@@ -131,5 +147,9 @@
         width: 85%;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .hidden {
+        display: none
     }
 </style>

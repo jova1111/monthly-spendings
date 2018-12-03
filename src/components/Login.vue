@@ -5,7 +5,7 @@
                 <form action="/login.php">
                     <div class="form-group">
                         <label for="email">Email address:</label>
-                        <input @keyup.enter="login" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
+                        <input v-autofocus @keyup.enter="login" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="pwd">Password:</label>

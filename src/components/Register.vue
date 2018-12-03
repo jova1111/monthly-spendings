@@ -5,7 +5,7 @@
                 <form>
                     <div class="form-group">
                         <label for="email">Email address:</label>
-                        <input @keyup.enter="register" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
+                        <input v-autofocus @keyup.enter="register" v-model="user.email" type="email" placeholder="Email" class="form-control" required>
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                     </div>
                     <div class="form-group">

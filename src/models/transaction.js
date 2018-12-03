@@ -6,7 +6,7 @@ export class Transaction{
             this.date='';
             this.id='';
             this.category = {
-                id: '-1',
+                id: -1,
                 name: 'No category'
             };
         }
@@ -17,7 +17,7 @@ export class Transaction{
             this.id = json.id;
             if(!json.transaction_category) {
                 this.category = {
-                    id: '-1',
+                    id: -1,
                     name: 'No category'
                 };
             } else {

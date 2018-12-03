@@ -100,42 +100,43 @@
                 isCurrentMonth: true,
                 isLoaded: false,
                 showNewCategoryModal: false,
-                visible: true
+                visible: true,
+                processStartEventName: 'started-processing',
+                processFinishEventName: 'finished-processing'
             }
         },
 
         methods: {
              createTransaction() {
-                this.isLoaded = false;
+                this.$emit(this.processStartEventName);
                 transactionService.createTransaction(this.transaction)
                     .then(response =>
                     {
                         this.transaction.description='';
                         this.transaction.moneyspent='';
                         this.transactionList.push(response);
-                        this.$refs.descriptionInput.focus();
                         this.$emit('updated',  this.transactionList);
-                        this.isLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     }).catch(error=>
                     {
                         alert(error);
-                        this.isLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     });
             },
             deleteTransaction(id) {
                 if (!confirm('Are you sure you want to delete this transaction?')) {
                     return;
                 }
-                this.isLoaded = false;
+                this.$emit(this.processStartEventName);
                 transactionService.delete(id)
                     .then(response => {
                         this.transactionList = this.transactionList.filter(transaction => transaction.id != id);
                         this.$emit('updated', this.transactionList);
-                        this.isLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     })
                     .catch(error => {
                         alert(error);
-                        this.isLoaded = true;
+                        this.$emit(this.processFinishEventName);
                     });
             },
 
@@ -217,4 +218,5 @@
     #show-modal {
         margin: 5px;
     }
+
 </style>
