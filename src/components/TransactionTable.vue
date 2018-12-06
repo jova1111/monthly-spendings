@@ -108,6 +108,7 @@
 
         methods: {
              createTransaction() {
+                this.$refs.descriptionInput.focus();
                 this.$emit(this.processStartEventName);
                 transactionService.createTransaction(this.transaction)
                     .then(response =>
@@ -117,6 +118,9 @@
                         this.transactionList.push(response);
                         this.$emit('updated',  this.transactionList);
                         this.$emit(this.processFinishEventName);
+                        this.$nextTick(() => {
+                            this.$refs.descriptionInput.focus();
+                        });
                     }).catch(error=>
                     {
                         alert(error);

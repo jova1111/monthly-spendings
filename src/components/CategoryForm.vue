@@ -12,13 +12,13 @@
 
                     <div class="modal-body">
                         <slot name="body">
-                            <input v-autofocus class="form-control" type="text" v-model="categoryName" placeholder="Name of category">
+                            <input @keyup.enter="addCategory" v-autofocus class="form-control" type="text" v-model="categoryName" placeholder="Name of category">
                         </slot>
                     </div>
 
                     <div class="modal-footer">
                         <slot name="footer">
-                        <input type="button" @click="addCategory()" class="btn violet modal-default-button" value="Create">
+                        <input type="button" @click="addCategory" class="btn violet modal-default-button" value="Create">
                         <button class="btn modal-default-button" @click="$emit('close')">Cancel</button>
                         </slot>
                     </div>

@@ -150,6 +150,6 @@
     }
 
     .hidden {
-        display: none
+        display: hidden
     }
 </style>
