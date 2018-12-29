@@ -42,6 +42,12 @@
                     res[categoryName].total += value.moneyspent;
                     return res;
                 }, {});
+
+                result.sort((a, b) => {
+                    return b.total - a.total
+                })
+
+
                 return result;
             }
         },
