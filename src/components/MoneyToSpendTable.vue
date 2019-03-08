@@ -73,6 +73,7 @@
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
+        margin-bottom: 2em;
     }
 
     .transactions td, .transactions th {
