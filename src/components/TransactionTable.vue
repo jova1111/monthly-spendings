@@ -1,5 +1,9 @@
 <template>
-    <div>
+    <div class="main-container">
+        <span class="move-to-right">
+            <label for="dailySpendingsCheckbox">Show daily spendings</label>
+            <input id="dailySpendingsCheckbox" v-model="showDailySpendings" @change="showDailySpendingsChanged" type="checkbox">
+        </span>
         <table class="transactions">
             <tr class="table-header" @click="visible = !visible">
                 <th class="transaction-date">Date</th>
@@ -21,13 +25,22 @@
                 </td>
                 <td><input @keyup.enter="createTransaction" type="text" class="form-control" placeholder="$$" v-model="transaction.moneyspent"></td>
             </tr>
-            <tr v-for="transObj in sortedTransList" v-bind:key="transObj.id" v-if="visible">
-                <td>{{ transObj.date | toLocalDate }}</td>
-                <td>{{ transObj.description }}</td>
-                <td>{{ transObj.category.name }}</td>
-                <td>{{ transObj.moneyspent }}</td>
-                <td v-if="showActionControls"><input type="button" class="violet" value="x" @click="deleteTransaction(transObj.id)"></td>
-            </tr>
+
+            <template v-if="visible">
+                <template class="transactions" style="width:100%" v-for="(transactionsObj, key) in dailyValues">
+                    <tr v-for="transactObj in transactionsObj" v-bind:key="transactObj.id">
+                        <td>{{ transactObj.date | toLocalDate }}</td>
+                        <td>{{ transactObj.description }}</td>
+                        <td>{{ transactObj.category.name }}</td>
+                        <td>{{ transactObj.moneyspent }}</td>
+                        <td v-if="showActionControls"><input type="button" class="violet" value="x" @click="deleteTransaction(transactObj.id)"></td>
+                    </tr>
+                    <tr class="total-row" v-bind:key="key" v-if="showDailySpendings">
+                        <td colspan="3">Total:</td>
+                        <td>{{ transactionsObj.sum }}</td>
+                    </tr>
+                </template>
+            </template>
         </table>
         <category-form-modal v-if="showNewCategoryModal" @created="addCategoryFromModal" @close="showNewCategoryModal = false"></category-form-modal>
     </div>
@@ -64,6 +77,12 @@
         created() {
             this.transactionList = this.transactions;
             this.categoryList = this.categories;
+
+            let showDailySpendings = localStorage.getItem("showDailySpendings");
+            if (showDailySpendings) {
+                this.showDailySpendings = showDailySpendings == 'true';
+            }
+            console.log(showDailySpendings);
         },
 
         computed: {
@@ -77,7 +96,24 @@
                 }
                 return this.transactionList.sort(compare);
             },
+            dailyValues: function() {
+                let key = 'date'
+                let dailyValues = this.transactionList.reduce(function(rv, x) {
+                    (rv[x[key]] = rv[x[key]] || []).push(x);
+                    return rv;
+                }, {});
 
+                for (let key of Object.keys(dailyValues)) {
+                    let transactionsForDay = dailyValues[key];
+                    let dailySum = 0;
+                    for (let transaction of transactionsForDay) {
+                        dailySum += transaction.moneyspent;
+                    }
+                    transactionsForDay.sum = dailySum;
+                }
+                console.log(dailyValues);
+                return dailyValues;
+            },
             categoryValues: function() {
                 let retVal = this.categories.map(category => {
                     return {
@@ -92,8 +128,7 @@
                     this.transaction.category.id = noCategory[0].value;
                 }
 
-                return retVal;
-                
+                return retVal;              
             }
         },
 
@@ -106,7 +141,8 @@
                 showNewCategoryModal: false,
                 visible: true,
                 processStartEventName: 'started-processing',
-                processFinishEventName: 'finished-processing'
+                processFinishEventName: 'finished-processing',
+                showDailySpendings: false
             }
         },
 
@@ -132,6 +168,7 @@
                     });
             },
             deleteTransaction(id) {
+                console.log(this.dailyValues);
                 if (!confirm('Are you sure you want to delete this transaction?')) {
                     return;
                 }
@@ -153,6 +190,10 @@
                 this.transaction.category.id = category.id;
                 this.$refs.descriptionInput.focus();
                 this.showNewCategoryModal = false;
+            },
+
+            showDailySpendingsChanged() {
+                localStorage.setItem("showDailySpendings", this.showDailySpendings);
             }
         }
     }
@@ -227,4 +268,21 @@
         margin: 5px;
     }
 
+    .total-row {
+        background-color: rgb(185, 185, 233) !important;
+    }
+
+    .invisible {
+        visibility: hidden;
+    }
+
+    .move-to-right {
+        margin-left: auto;
+        margin-right: 3em;
+    }
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+    }
 </style>

@@ -2,21 +2,21 @@
     <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
-                <select class="move-lo-left" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
+                <select class="move-to-right" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
                     <option v-for="singleYear of allYears" :key="singleYear"> {{singleYear}} </option>
                 </select>
             </div>
-                <table id="transactions">
-                    <tr>
-                        <th>Month</th>
-                        <th class="money-spent">Total Money spent</th>
-                    </tr>
-                    <tr v-for="filteredMonth of filteredMonths" :key="filteredMonth.month" @click="getTransactionsForMonth(filteredMonth.index, selectedYear)">
-                        <td>{{ filteredMonth.month }}</td>
-                        <td>{{ filteredMonth.moneySpent }}</td>
-                    </tr>
-                </table>
-                <router-link class="move-lo-left violet" :to="'/statistics/' + selectedYear" tag="button">Statistics</router-link>
+            <table id="transactions">
+                <tr>
+                    <th>Month</th>
+                    <th class="money-spent">Total Money spent</th>
+                </tr>
+                <tr v-for="filteredMonth of filteredMonths" :key="filteredMonth.month" @click="getTransactionsForMonth(filteredMonth.index, selectedYear)">
+                    <td>{{ filteredMonth.month }}</td>
+                    <td>{{ filteredMonth.moneySpent }}</td>
+                </tr>
+            </table>
+            <router-link class="move-to-right violet" :to="'/statistics/' + selectedYear" tag="button">Statistics</router-link>
         </div>
     </div>
     <spinner v-else></spinner>
@@ -125,7 +125,7 @@ export default {
 </script>
 
 <style scoped>
-.move-lo-left{
+.move-to-right {
     position:relative;
     left: 50%;
     transform: translate(-50%, 0%);
