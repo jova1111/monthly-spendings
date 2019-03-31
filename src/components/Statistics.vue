@@ -38,11 +38,13 @@
                         borderWidth: 3,
                         borderColor: randomColor,
                         showLine: true,
+                        hidden: true,
                         data
                     });
 
                 });
                 
+                categoriesWithTotals[0].hidden = false;
                 return categoriesWithTotals;
             }
         },
@@ -64,7 +66,7 @@
         },
 
         mounted: function() {
-            transactionService.getGroupedByMonthByYear(new Date().getFullYear())
+            transactionService.getGroupedByMonthByYear(this.$route.params.year)
                 .then(response=> {
                     this.transactionsGroupedByCategory = response;
                     this.chartData.datasets = this.categoriesWithTotals;

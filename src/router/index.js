@@ -49,7 +49,7 @@ const router = new VueRouter(
       component: CommunityMain
     },
     {
-      path: '/statistics',
+      path: '/statistics/:year',
       name: 'Statistics',
       component: Statistics
     }

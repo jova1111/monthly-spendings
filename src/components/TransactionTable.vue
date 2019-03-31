@@ -79,14 +79,12 @@
             },
 
             categoryValues: function() {
-                console.log('before map', this.categories)
                 let retVal = this.categories.map(category => {
                     return {
                         value: category.id,
                         text: category.name
                     }
                 });
-                console.log('after map', retVal)
 
                 let noCategory = retVal.filter(el => el.text == 'No category');
                 if(noCategory.length > 0)

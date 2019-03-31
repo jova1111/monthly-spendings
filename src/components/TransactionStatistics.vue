@@ -16,7 +16,7 @@
                         <td>{{ filteredMonth.moneySpent }}</td>
                     </tr>
                 </table>
-                <router-link class="move-lo-left violet" to="/statistics" tag="button">Statistics</router-link>
+                <router-link class="move-lo-left violet" :to="'/statistics/' + selectedYear" tag="button">Statistics</router-link>
         </div>
     </div>
     <spinner v-else></spinner>
