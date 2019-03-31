@@ -79,14 +79,20 @@
             },
 
             categoryValues: function() {
+                console.log('before map', this.categories)
                 let retVal = this.categories.map(category => {
                     return {
                         value: category.id,
                         text: category.name
                     }
                 });
+                console.log('after map', retVal)
 
-                retVal.unshift({ value: -1, text: 'No category'});
+                let noCategory = retVal.filter(el => el.text == 'No category');
+                if(noCategory.length > 0)
+                { 
+                    this.transaction.category.id = noCategory[0].value;
+                }
 
                 return retVal;
                 

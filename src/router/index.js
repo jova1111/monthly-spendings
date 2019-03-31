@@ -9,6 +9,7 @@ import { lockedPagesForUser } from '../constants/const'
 import authService from '../services/auth-service'
 import TransactionView from '@/components/TransactionView'
 import CommunityMain from '@/components/CommunityMain'
+import Statistics from '@/components/Statistics'
 
 Vue.use(VueRouter)
 const router = new VueRouter(
@@ -46,6 +47,11 @@ const router = new VueRouter(
       path: '/community/main',
       name: 'CommunityMain',
       component: CommunityMain
+    },
+    {
+      path: '/statistics',
+      name: 'Statistics',
+      component: Statistics
     }
   ],
   mode: 'history'

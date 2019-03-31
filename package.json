@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "chart.js": "^2.8.0",
     "eslint": "^5.2.0",
     "express": "^4.16.3",
     "moment": "^2.22.2",
     "vue": "^2.5.2",
     "vue-autofocus-directive": "0.0.5",
+    "vue-chartjs": "^3.4.2",
     "vue-router": "^3.0.1",
     "vue-search-select": "^2.7.1"
   },
