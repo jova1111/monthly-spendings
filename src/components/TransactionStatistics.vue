@@ -11,16 +11,12 @@
                         <th>Month</th>
                         <th class="money-spent">Total Money spent</th>
                     </tr>
-                    <tr v-for="(month_name, index) of month_names_reversed" :key="month_name" v-if="isCurrentYear(transactionList[11-index]) || isCurrentMonth(month_name)" @click="getTransactionsForMonth(12-index,selectedYear)">
-                        <td>{{ month_name }}</td>
-                        <td>{{ transactionList[11-index] }}</td>
-                    </tr>
-                    <tr v-for="(month_name, index) of month_names" :key="month_name" v-if="isNotCurrentYear(transactionList[index])" @click="getTransactionsForMonth(index+1,selectedYear)">
-                        <td>{{ month_name }}</td>
-                        <td>{{ transactionList[index] }}</td>
+                    <tr v-for="filteredMonth of filteredMonths" :key="filteredMonth.month" @click="getTransactionsForMonth(filteredMonth.index, selectedYear)">
+                        <td>{{ filteredMonth.month }}</td>
+                        <td>{{ filteredMonth.moneySpent }}</td>
                     </tr>
                 </table>
-
+                <router-link class="move-lo-left violet" to="/statistics" tag="button">Statistics</router-link>
         </div>
     </div>
     <spinner v-else></spinner>
@@ -46,6 +42,24 @@ export default {
             get: function() {
                 return this.areTransactionsForYearLoaded && this.areAllYearsLoaded;
             }
+        },
+        filteredMonths: function() {
+            let filteredMonthsList = [];
+            let index = 0;
+            for(index; index < 12; index++) {
+                if(this.transactionList[index] != 0 || this.isCurrentMonth(this.monthNames[index])) {
+                    
+                    filteredMonthsList.push({
+                        index: index + 1,
+                        month: this.monthNames[index],
+                        moneySpent: this.transactionList[index]    
+                    });
+                }
+            }
+            if((this.selectedYear == new Date().getFullYear())) {
+                return filteredMonthsList.reverse();
+            }
+            return filteredMonthsList;
         }
     },
     name: 'TransactionView',
@@ -53,11 +67,10 @@ export default {
     data()
     {
         return {
-            selectedYear:2018,
+            selectedYear: 2018,
             allYears: [],
             singleYear: '',
-            month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            month_names_reversed: ['December', 'November', 'October', 'September', 'August', 'July', 'June', 'May', 'April', 'March', 'February', 'January'],
+            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             transaction: new Transaction(),
             transactionList: [],
             areTransactionsForYearLoaded: false,
@@ -76,15 +89,13 @@ export default {
            return (this.selectedYear == moment(Date.now()).format('YYYY') && moneySpent != 0);
         },
         isCurrentMonth(currentMonthName) {
-            return (currentMonthName == moment(Date.now()).format('MMMM'));
-        },
-        isNotCurrentYear(value) {
-           return (this.selectedYear != moment(Date.now()).format('YYYY') && value != 0);
+            return (currentMonthName == moment(Date.now()).format('MMMM') && this.selectedYear == new Date().getFullYear());
         },
         getTransactionsForYear(yearToSend) {
             transactionService.getTransactionsForYear(yearToSend)
                 .then(response=> {
                     this.transactionList = response;
+                    console.log(this.transactionList);
                     this.areTransactionsForYearLoaded = true;
                 }).catch(error=> {
                     alert(error);
@@ -162,4 +173,11 @@ export default {
     background-color: rgb(124, 124, 225);
     color: white;
 }
+
+.violet {
+        margin-top: 5px;
+        background-color: rgb(124, 124, 225);
+        color: white;
+        border: 1px solid gray;
+    }
 </style>

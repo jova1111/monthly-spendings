@@ -26,5 +26,5 @@ export default {
                     reject(error);
                 });
         });
-    }
+    },
 }

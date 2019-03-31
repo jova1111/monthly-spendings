@@ -100,6 +100,40 @@ export default
         })
     },
 
+    getTransactionsForCurrentYear()
+    {
+        return new Promise((resolve, reject)=>
+        {
+            let yearToSend = new Date().getFullYear();
+            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+            axios.get(requestUrl() + '/transactions',
+            {
+                params: 
+                {
+                    Year: yearToSend
+                }
+                ,              
+                headers: 
+                {
+                    Authorization: 'Bearer ' + parsedToken.value
+                }
+            })
+            .then((response)=> 
+            {
+                let transList = [];
+                for(let transObj of response.data)
+                {
+                    transList.push(new Transaction(transObj));
+                }
+                resolve(transList);
+            })
+            .catch((error)=> 
+            {
+                reject(error);
+            });
+        })
+    },
+
     getTransactionsForYear(yearToSend)
     {
         return new Promise((resolve, reject)=>
@@ -164,6 +198,18 @@ export default
         return new Promise((resolve, reject) => {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
             axios.put(requestUrl() + '/transactions/money_per_month', { value }, { headers: { Authorization: 'Bearer ' + parsedToken.value }})
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    },
+    getGroupedByMonthByYear(year) {
+        let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+        return new Promise((resolve, reject) => {
+            axios.get(requestUrl() + '/transaction/year/' + year, { headers: { 'Authorization': 'Bearer ' + parsedToken.value }})
                 .then(response => {
                     resolve(response.data);
                 })
