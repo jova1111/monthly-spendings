@@ -5,7 +5,7 @@ export default {
 
     saveToken(token){
         console.log(token);
-        let tokenToDate={
+        let tokenToDate = {
             value: token.token,
             expireDate: token.expires_in
         }
@@ -16,13 +16,12 @@ export default {
         return new Promise((resolve, reject)=>{
             console.log(user);
             axios.post(requestUrl() + '/login',user)
-            .then((response)=> {
+            .then((response) => {
                 this.saveToken(response.data);
                 resolve(response.data);
             })
-            .catch((error)=> {
-                console.log(error);
-                reject('Jebga');
+            .catch((error) => {
+                reject(error);
             });
         })
     },
@@ -35,21 +34,21 @@ export default {
                 resolve(response.data);
             })
             .catch((error)=> {
-                console.log(error);
-                reject('Jebga');
+                reject(error);
             });
         })
     },
 
     isLoggedIn(){
         let savedToken = localStorage.getItem('AuthenticationToken');
-        if(!savedToken){
+        if (!savedToken) {
             return false;
         }
         let parsedToken = JSON.parse(savedToken);
-        if(parsedToken.expireDate * 1000 >= new Date().getTime()){
+        if (parsedToken.expireDate * 1000 >= new Date().getTime()) {
             return true;
         }
+        localStorage.removeItem('AuthenticationToken');
         return false;
     }
 }

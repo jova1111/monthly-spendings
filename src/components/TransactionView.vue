@@ -126,8 +126,14 @@
             getMoneyToSpend() {
                 transactionService.getMoneyPerMonth(this.monthToSend, this.yearToSend)
                     .then(value => {
-                        this.moneyToSpend = value;
-                        this.savedMoneyToSpend = value;
+                        if (value) {
+                            this.moneyToSpend = value;
+                            this.savedMoneyToSpend = value;
+                        } else {
+                            this.moneyToSpend = 0;
+                            this.savedMoneyToSpend = 0;
+                        }
+
                         this.isMoneyToSpendLoaded = true;
                     })
                     .catch(error => {
