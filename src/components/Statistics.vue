@@ -1,12 +1,14 @@
 <template>
-    <div v-if="isLoaded" class="main-container">
-        <div class="chart-container">
+    <div class="main-container">
+        <div v-if="areTransactionsGroupedByCategoryLoaded" class="chart-container">
             <chart :chartdata="chartData" :options="chartOptions"></chart>
         </div>
+        <spinner v-else></spinner>
 
-        <category-table class="center-middle category-table" :transactions="allTransactionsForYear"></category-table>
+        <category-table v-if="areTransactionsForYearLoaded" class="center-middle category-table" :transactions="allTransactionsForYear"></category-table>
+        <spinner v-else></spinner>
     </div>
-    <spinner v-else></spinner>
+    
 </template>
 
 <script>
@@ -57,7 +59,8 @@
             return {
                 transactionsGroupedByCategory: [],
                 allTransactionsForYear: [],
-                isLoaded: false,
+                areTransactionsForYearLoaded: false,
+                areTransactionsGroupedByCategoryLoaded: false,
                 chartData: {
                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                         datasets: [
@@ -75,6 +78,7 @@
                 .then(response => {
                     this.transactionsGroupedByCategory = response;
                     this.chartData.datasets = this.categoriesWithTotals; 
+                    this.areTransactionsGroupedByCategoryLoaded = true;
                 }).catch(error => {
                     alert(error);
                 });
@@ -82,7 +86,7 @@
             transactionService.getAllTransactionsForYear(this.$route.params.year)
                 .then(response => {
                     this.allTransactionsForYear = response;
-                    this.isLoaded = true;
+                    this.areTransactionsForYearLoaded = true;
                 }).catch(error => {
                     alert(error);
                 });
