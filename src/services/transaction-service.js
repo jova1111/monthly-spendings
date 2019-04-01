@@ -74,6 +74,34 @@ export default
         })
     },
 
+    getAllTransactionsForYear(year)
+    {
+        return new Promise((resolve, reject)=>
+        {
+            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
+            axios.get(requestUrl() + '/transactions/year/' + year,
+            {
+                headers: 
+                {
+                    Authorization: 'Bearer ' + parsedToken.value
+                }
+            })
+            .then((response)=> 
+            {
+                let transList = [];
+                for(let transObj of response.data)
+                {
+                    transList.push(new Transaction(transObj));
+                }
+                resolve(transList);
+            })
+            .catch((error)=> 
+            {
+                reject(error);
+            });
+        })
+    },
+
     getAllYears()
     {
         return new Promise((resolve, reject)=>
@@ -209,7 +237,7 @@ export default
     getGroupedByMonthByYear(year) {
         let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
         return new Promise((resolve, reject) => {
-            axios.get(requestUrl() + '/transaction/year/' + year, { headers: { 'Authorization': 'Bearer ' + parsedToken.value }})
+            axios.get(requestUrl() + '/transaction/year/' + year + '/category_groups', { headers: { 'Authorization': 'Bearer ' + parsedToken.value }})
                 .then(response => {
                     resolve(response.data);
                 })

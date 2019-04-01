@@ -1,8 +1,10 @@
 <template>
-    <div v-if="isLoaded">
+    <div v-if="isLoaded" class="main-container">
         <div class="chart-container">
             <chart :chartdata="chartData" :options="chartOptions"></chart>
         </div>
+
+        <category-table class="center-middle category-table" :transactions="allTransactionsForYear"></category-table>
     </div>
     <spinner v-else></spinner>
 </template>
@@ -11,11 +13,13 @@
     import transactionService from '../services/transaction-service'
     import LineChart from './LineChart'
     import LoadingSpinner from './LoadingSpinner'
+    import CategoryTable from './CategoryTable'
 
     export default {
         components: {
             'spinner': LoadingSpinner,
-            'chart': LineChart
+            'chart': LineChart,
+            'category-table': CategoryTable
         },
         computed: {
             categoriesWithTotals: function() {
@@ -52,6 +56,7 @@
         data() {
             return {
                 transactionsGroupedByCategory: [],
+                allTransactionsForYear: [],
                 isLoaded: false,
                 chartData: {
                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -67,11 +72,18 @@
 
         mounted: function() {
             transactionService.getGroupedByMonthByYear(this.$route.params.year)
-                .then(response=> {
+                .then(response => {
                     this.transactionsGroupedByCategory = response;
-                    this.chartData.datasets = this.categoriesWithTotals;
+                    this.chartData.datasets = this.categoriesWithTotals; 
+                }).catch(error => {
+                    alert(error);
+                });
+
+            transactionService.getAllTransactionsForYear(this.$route.params.year)
+                .then(response => {
+                    this.allTransactionsForYear = response;
                     this.isLoaded = true;
-                }).catch(error=> {
+                }).catch(error => {
                     alert(error);
                 });
         },
@@ -94,5 +106,21 @@
         margin-left: auto;
         margin-right: auto;
         width: 85%;
+    }
+
+    .category-table {
+        margin-top: 50px;
+        width: 70%;
+    }
+
+    .main-container {
+        margin-left: 50px;
+        margin-right: 50px;
+        margin-bottom: 50px;
+    }
+
+    .center-middle {
+        margin-left: auto;
+        margin-right: auto;
     }
 </style>
