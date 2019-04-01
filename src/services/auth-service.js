@@ -7,7 +7,7 @@ export default {
         console.log(token);
         let tokenToDate={
             value: token.token,
-            expireDate: token.expires_in*1000 + Date.now()
+            expireDate: token.expires_in
         }
         localStorage.setItem('AuthenticationToken', JSON.stringify(tokenToDate));
     },
@@ -44,14 +44,12 @@ export default {
     isLoggedIn(){
         let savedToken = localStorage.getItem('AuthenticationToken');
         if(!savedToken){
-            console.log('No token')
             return false;
         }
         let parsedToken = JSON.parse(savedToken);
-        if(parsedToken.expireDate >= Date.now()){
+        if(parsedToken.expireDate * 1000 >= new Date().getTime()){
             return true;
         }
-        console.log('Token expired')
         return false;
     }
 }

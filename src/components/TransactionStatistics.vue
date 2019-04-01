@@ -2,7 +2,7 @@
     <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
-                <select class="move-to-right" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
+                <select class="select-year form-control move-to-right" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear)">
                     <option v-for="singleYear of allYears" :key="singleYear"> {{singleYear}} </option>
                 </select>
             </div>
@@ -16,7 +16,7 @@
                     <td>{{ filteredMonth.moneySpent }}</td>
                 </tr>
             </table>
-            <router-link class="move-to-right violet" :to="'/statistics/' + selectedYear" tag="button">Statistics</router-link>
+            <router-link class="btn move-to-right violet" :to="'/statistics/' + selectedYear" tag="button">Statistics</router-link>
         </div>
     </div>
     <spinner v-else></spinner>
@@ -62,8 +62,8 @@ export default {
             return filteredMonthsList;
         }
     },
-    name: 'TransactionView',
-    props: ['Year','Month'],
+    name: 'TransactionStatistics',
+
     data()
     {
         return {
@@ -93,11 +93,10 @@ export default {
         },
         getTransactionsForYear(yearToSend) {
             transactionService.getTransactionsForYear(yearToSend)
-                .then(response=> {
+                .then(response => {
                     this.transactionList = response;
-                    console.log(this.transactionList);
                     this.areTransactionsForYearLoaded = true;
-                }).catch(error=> {
+                }).catch(error => {
                     alert(error);
                 });
         },
@@ -108,16 +107,17 @@ export default {
         getAllYears()
         {
             transactionService.getAllYears()
-                .then(response=>
+                .then(response =>
                 {
-                    if (response.length == 1 && response[0]<2000) this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});
+                    if (response.length == 1 && response[0]<2000) {
+                        this.$router.push({ name: 'TransactionView', params: { Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});   
+                    }
                     this.allYears=response[0];
                     this.areAllYearsLoaded = true;
                 })
-                .catch(error=>
+                .catch(error =>
                 {
                     alert(error);
-                    this.$router.push({ name: 'TransactionView', params: {Month: moment(Date.now()).format('M'), Year: moment(Date.now()).format('YYYY') }});
                 });
         }
     }
@@ -130,6 +130,7 @@ export default {
     left: 50%;
     transform: translate(-50%, 0%);
 }
+
 .money-spent
 {
      text-align: center;
@@ -175,9 +176,17 @@ export default {
 }
 
 .violet {
-        margin-top: 5px;
-        background-color: rgb(124, 124, 225);
-        color: white;
-        border: 1px solid gray;
-    }
+    margin-top: 5px;
+    background-color: rgb(124, 124, 225);
+    color: white;
+    border: 1px solid gray;
+}
+
+.select-year {
+    width: 20%;
+    position:relative;
+    left: 90%;
+    transform: translate(-50%, 0%);
+    margin-bottom: 5px;
+}
 </style>
