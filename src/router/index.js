@@ -56,11 +56,11 @@ const router = new VueRouter(
   ],
   mode: 'history'
 })
-router.beforeEach((to, from, next)=>
+router.beforeResolve((to, from, next)=>
 {
   if (authService.isLoggedIn())
   {
-    if (lockedPagesForUser.filter(lockedPage=>lockedPage==to.path).length<1)
+    if (lockedPagesForUser.filter(lockedPage => lockedPage == to.path).length < 1)
     {
       next();
     }
@@ -68,7 +68,7 @@ router.beforeEach((to, from, next)=>
   }
   else
   {
-    if (lockedPaguesForGuest.filter(lockedPage=>lockedPage==to.path).length<1)
+    if (lockedPaguesForGuest.filter(lockedPage => lockedPage == to.path).length < 1)
     {
       next();
     }
