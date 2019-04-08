@@ -88,7 +88,7 @@
         computed: {
             dailyValues: function() {
                 let key = 'date'
-                let dailyValues = this.transactionList.reduce(function(rv, x) {
+                let dailyValues = this.sortedTransactionsList.reduce(function(rv, x) {
                     (rv[x[key]] = rv[x[key]] || []).push(x);
                     return rv;
                 }, {});
@@ -100,9 +100,7 @@
                         dailySum += transaction.moneyspent;
                     }
                     transactionsForDay.sum = dailySum;
-                    this.sortList(transactionsForDay);
                 }
-                console.log(dailyValues);
                 return dailyValues;
             },
             categoryValues: function() {
@@ -120,6 +118,16 @@
                 }
 
                 return retVal;              
+            },
+            sortedTransactionsList: function() {
+                function compare(a, b) {
+                    if (a.id > b.id)
+                        return -1;
+                    if (a.id < b.id)
+                        return 1;
+                    return 0;
+                }
+                return this.transactionList.sort(compare);
             }
         },
 
@@ -185,18 +193,7 @@
 
             showDailySpendingsChanged() {
                 localStorage.setItem("showDailySpendings", this.showDailySpendings);
-            },
-
-            sortList: function(list) {
-                function compare(a, b) {
-                    if (a.id > b.id)
-                        return -1;
-                    if (a.id < b.id)
-                        return 1;
-                    return 0;
-                }
-                return list.sort(compare);
-            },
+            }
         }
     }
 </script>
