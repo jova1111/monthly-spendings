@@ -186,7 +186,9 @@
 
             addCategoryFromModal(category) {
                 this.categories.push(category);
-                this.transaction.category.id = category.id;
+                this.$nextTick(() => {
+                    this.transaction.category.id = category.id;
+                });
                 this.$refs.descriptionInput.focus();
                 this.showNewCategoryModal = false;
             },
