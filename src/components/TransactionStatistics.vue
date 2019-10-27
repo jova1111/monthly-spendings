@@ -176,6 +176,7 @@ export default {
         width: 50%;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 30px;
         /*position: fixed;
         left: 50%;
         /* bring your own prefixes 
