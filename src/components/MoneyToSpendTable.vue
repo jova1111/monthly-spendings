@@ -22,7 +22,7 @@
     export default {
         props: {
             'transactions': Array,
-            'money': Number,
+            'money': Array,
             'editable': Boolean
         },
         
@@ -42,7 +42,9 @@
         },
 
         created() {
-            this.moneyToSpend = this.money;
+            if (this.money.length > 0) {
+                 this.moneyToSpend = this.money[0].value;
+            }
         },
 
         methods: {

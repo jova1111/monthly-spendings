@@ -38,13 +38,10 @@ export default {
     },
     methods: {
         register(){
-            console.log(requestUrl);
             authService.register(this.user)
-                .then(response=>{
-                    console.log(response);
+                .then(response => { 
                     this.$router.push('/login');
-                }).catch(error=>{
-                    console.log(error);
+                }).catch(error => {
                 });
         }  
     }

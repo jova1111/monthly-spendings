@@ -82,7 +82,6 @@
             if (showDailySpendings) {
                 this.showDailySpendings = showDailySpendings == 'true';
             }
-            console.log(showDailySpendings);
         },
 
         computed: {
@@ -167,7 +166,6 @@
                     });
             },
             deleteTransaction(id) {
-                console.log(this.dailyValues);
                 if (!confirm('Are you sure you want to delete this transaction?')) {
                     return;
                 }

@@ -26,8 +26,7 @@ export default
                 reject(error);
             });
         })
-    },
-    
+    }, 
     delete(id) {
         return new Promise((resolve, reject) => {
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
@@ -40,7 +39,6 @@ export default
                 });
         });
     },
-
     getTransactionsForMonth(indexM, indexY)
     {
         return new Promise((resolve, reject)=>
@@ -73,7 +71,6 @@ export default
             });
         })
     },
-
     getAllTransactionsForYear(year)
     {
         return new Promise((resolve, reject)=>
@@ -101,7 +98,6 @@ export default
             });
         })
     },
-
     getAllYears()
     {
         return new Promise((resolve, reject)=>
@@ -127,41 +123,6 @@ export default
             });
         })
     },
-
-    getTransactionsForCurrentYear()
-    {
-        return new Promise((resolve, reject)=>
-        {
-            let yearToSend = new Date().getFullYear();
-            let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-            axios.get(requestUrl() + '/transactions',
-            {
-                params: 
-                {
-                    Year: yearToSend
-                }
-                ,              
-                headers: 
-                {
-                    Authorization: 'Bearer ' + parsedToken.value
-                }
-            })
-            .then((response)=> 
-            {
-                let transList = [];
-                for(let transObj of response.data)
-                {
-                    transList.push(new Transaction(transObj));
-                }
-                resolve(transList);
-            })
-            .catch((error)=> 
-            {
-                reject(error);
-            });
-        })
-    },
-
     getTransactionsForYear(yearToSend)
     {
         return new Promise((resolve, reject)=>
@@ -208,14 +169,14 @@ export default
             let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
             axios.get(requestUrl() + '/transactions/money_per_month', { 
                 params: { 
-                    Year: year ,
+                    Year: year,
                     Month: month
                 },
                 headers: { 
                         Authorization: 'Bearer ' + parsedToken.value }
                 })
                 .then(response => {
-                    resolve(response.data.value);
+                    resolve(response.data.map(data => { return { value: data.value, created_at: data.created_at} }));
                 })
                 .catch(error => {
                     reject(error);
