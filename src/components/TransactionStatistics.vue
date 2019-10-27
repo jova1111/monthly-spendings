@@ -2,7 +2,7 @@
     <div v-if="isLoaded" class="container-fluid">
         <div class="centerOnMiddle">
             <div>
-                <select class="select-year form-control move-to-right" v-model="selectedYear" v-on:change="getTransactionsForYear(selectedYear); getAllMoneyPerMonths(selectedYear)">
+                <select class="select-year form-control move-to-right" v-model="selectedYear" v-on:change="onSelectedYearChange(selectedYear)">
                     <option v-for="singleYear of allYears" :key="singleYear"> {{singleYear}} </option>
                 </select>
             </div>
@@ -153,6 +153,12 @@ export default {
                 .catch(error => {
                     alert(error);
                 });
+        },
+        onSelectedYearChange(year) {
+            this.areTransactionsForYearLoaded = false;
+            this.areMoneyPerMonthsLoaded = false;
+            this.getTransactionsForYear(year); 
+            this.getAllMoneyPerMonths(year)
         }
     }
 }
