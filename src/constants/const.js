@@ -1,11 +1,11 @@
-const lockedPaguesForGuest = [
-    '/transactions',
-    '/view/transactions'
+const lockedPagesForGuestRegex = [
+    /transactions/g,
+    /transactions\/[0-9]{4}\/[0-9]{2}/g,
+    /statistics/g
 ]
-const lockedPagesForUser = [
-    '/',
-    '/login',
-    '/register',
+const lockedPagesForUserRegex = [
+    /login/g,
+    /register/g,
 ]
 
 function requestUrl() {
@@ -13,4 +13,4 @@ function requestUrl() {
 }
 
 
-export {lockedPaguesForGuest, lockedPagesForUser, requestUrl}
+export { lockedPagesForGuestRegex, lockedPagesForUserRegex, requestUrl }

@@ -1,30 +1,42 @@
-import axios from 'axios'
-import { requestUrl } from '../constants/const'
+import axios from 'axios';
+import {
+  requestUrl
+} from '../constants/const';
 
 export default {
-    getAll() {
-        let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-        return new Promise((resolve, reject) => {
-            axios.get(requestUrl() + '/transaction_categories', { headers: { 'Authorization': 'Bearer ' + parsedToken.value }})
-                .then(response => {
-                    resolve(response.data);
-                })
-                .catch(error => {
-                    reject(error);
-                });
+  getAll() {
+    return new Promise((resolve, reject) => {
+      axios.get(requestUrl() + '/categories').then(response => {
+          resolve(response.data);
+        }).catch(error => {
+          reject(error.response.data.message);
         });
-    },
+    });
+  },
 
-    create(name) {
-        let parsedToken = JSON.parse(localStorage.getItem('AuthenticationToken'));
-        return new Promise((resolve, reject) => {
-            axios.post(requestUrl() + '/transaction_categories', { name }, { headers: { 'Authorization': 'Bearer ' + parsedToken.value }})
-                .then(response => {
-                    resolve(response.data);
-                })
-                .catch(error => {
-                    reject(error);
-                });
+  create(name) {
+    return new Promise((resolve, reject) => {
+      axios.post(requestUrl() + '/categories', {
+          name
+        })
+        .then(response => {
+          resolve(response.data);
+        })
+        .catch(error => {
+          reject(error.response.data.message);
         });
-    },
+    });
+  },
+
+  delete(id) {
+    return new Promise((resolve, reject) => {
+      axios.delete(requestUrl() + '/categories/' + id)
+        .then(response => {
+          resolve("Successfully deleted category.");
+        })
+        .catch(error => {
+          reject(error.response.data.message);
+        });
+    });
+  }
 }

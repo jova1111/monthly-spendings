@@ -1,78 +1,80 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import Login from '@/components/Login'
-import Register from '@/components/Register'
-import Transactions from '@/components/TransactionStatistics'
-import { lockedPaguesForGuest } from '../constants/const'
-import { lockedPagesForUser } from '../constants/const'
-import authService from '../services/auth-service'
-import TransactionView from '@/components/TransactionView'
-import CommunityMain from '@/components/CommunityMain'
-import Statistics from '@/components/Statistics'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import HomePage from '@/views/HomePage';
+import LoginPage from '@/views/LoginPage';
+import RegisterPage from '@/views/RegisterPage';
+import TransactionsHomePage from '@/views/TransactionsHomePage';
+import TransactionsPage from '@/views/TransactionsPage';
+import StatisticsPage from '@/views/StatisticsPage';
+import { lockedPagesForGuestRegex } from '../constants/const';
+import { lockedPagesForUserRegex } from '../constants/const';
+import userService from '../services/user-service';
 
 Vue.use(VueRouter)
 const router = new VueRouter(
   {
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      component: Register
-    },
+    routes: [
+      {
+        path: '/',
+        name: 'HomePage',
+        component: HomePage
+      },
+      {
+        path: '/login',
+        name: 'LoginPage',
+        component: LoginPage
+      },
+      {
+        path: '/register',
+        name: 'RegisterPage',
+        component: RegisterPage
+      },
+      {
+        path: '/transactions',
+        name: 'TransactionsHomePage',
+        props: true,
+        component: TransactionsHomePage
+      },
+      {
+        path: '/transactions/:year/:month',
+        name: 'TransactionsPage',
+        props: true,
+        component: TransactionsPage
+      },
+      {
+        path: '/statistics',
+        name: 'StatisticsPage',
+        component: StatisticsPage
+      }
+    ],
 
-    {
-      path: '/transactions',
-      name: 'Transactions',
-      props: true,
-      component: Transactions
-    },
-    {
-      path: '/view/transactions',
-      name: 'TransactionView',
-      props: true,
-      component: TransactionView
-    },
-    {
-      path: '/community/main',
-      name: 'CommunityMain',
-      component: CommunityMain
-    },
-    {
-      path: '/statistics/:year',
-      name: 'Statistics',
-      component: Statistics
-    }
-  ],
-  mode: 'history'
-})
+    mode: 'history'
+  });
+
 router.beforeResolve((to, from, next)=>
 {
-  if (authService.isLoggedIn())
+  if (userService.isLoggedIn())
   {
-    if (lockedPagesForUser.filter(lockedPage => lockedPage == to.path).length < 1)
+    if (to.path == '/') {
+      next('/transactions');
+    }
+    else if (lockedPagesForUserRegex.filter(lockedPageRegex => to.path.match(lockedPageRegex)).length < 1)
     {
       next();
     }
-    else next('/transactions');
+    else {
+      var date = new Date();
+      next(`/transactions/${date.getUTCFullYear()}/${date.getUTCMonth() + 1}`);
+    }
   }
   else
   {
-    if (lockedPaguesForGuest.filter(lockedPage => lockedPage == to.path).length < 1)
+    if (lockedPagesForGuestRegex.filter(lockedPageRegex => to.path.match(lockedPageRegex)).length < 1)
     {
       next();
     }
-    else next('/');
+    else next('/login');
   }
-});  
+});
+
 export default router;

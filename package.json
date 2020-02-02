@@ -1,8 +1,8 @@
 {
-  "name": "monthly_f",
+  "name": "monthly_spendings",
   "version": "1.0.0",
   "description": "How much do YOU spend? :)",
-  "author": "Wuksha wuksha95@hotmail.com",
+  "author": "Jova jocandragutinovic@gmail.com",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

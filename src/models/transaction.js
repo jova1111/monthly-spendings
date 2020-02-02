@@ -1,20 +1,19 @@
+import { Category } from './category';
+
 export class Transaction {
     constructor(json) {
         if (!json) {
             this.description = '';
-            this.moneyspent = '';
-            this.date = '';
-            this.id = '';
-            this.category = {
-                id: -1,
-                name: 'No category'
-            };
+            this.amount = 0;
+            this.creationDate = '';
+            this.id = -1;
+            this.category = new Category;
         } else {
             this.description = json.description;
-            this.moneyspent = json.moneyspent;
-            this.date = new Date(json.created_at).toDateString();
+            this.amount = json.amount;
+            this.creationDate = new Date(json.creationDate);
             this.id = json.id;
-            this.category = json.transaction_category;
+            this.category = new Category(json.category);
         }
     }
 }
