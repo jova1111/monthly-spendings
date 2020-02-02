@@ -1,6 +1,5 @@
-# monthly_f
+# monthly spendings
 
-> How much do YOU spend? :)
 
 ## Build Setup
 
