@@ -30,8 +30,8 @@
     },
 
     methods: {
-      register(){
-        userService.register(this.user)
+      register(user){
+        userService.register(user)
           .then(response => {
             this.$router.push('/login');
           }).catch(error => {

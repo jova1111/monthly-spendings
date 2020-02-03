@@ -36,6 +36,7 @@ export default {
   },
 
   register(user) {
+    console.log(user);
     return new Promise((resolve, reject) => {
       axios.post(requestUrl() + '/register', user)
         .then(response => {
