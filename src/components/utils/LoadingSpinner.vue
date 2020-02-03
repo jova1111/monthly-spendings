@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img class="image" src="https://zippy.gfycat.com/SkinnySeveralAsianlion.gif" />
+    <img class="image" src="static/spinner.gif" />
   </div>
 </template>
 

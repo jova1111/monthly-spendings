@@ -11,7 +11,7 @@
           v-autofocus
           class="form-control"
           type="text"
-          v-model="categoryName"
+          v-model="category.name"
           placeholder="Name of category"
         />
       </template>
@@ -54,7 +54,7 @@
       addCategory() {
         this.isLoading = true;
         categoryService
-          .create(this.categoryName)
+          .create(this.category.name)
           .then(createdCategory => {
             this.isLoading = false;
             this.$emit('created', createdCategory);

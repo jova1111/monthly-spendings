@@ -58,70 +58,6 @@
       }
     },
 
-    categoriesWithTotalsForYear: function() {
-      let categoriesWithTotals = [];
-      Object.entries(this.spendingsGroupedByCategory).forEach(entry => {
-        let categoryName = entry[0];
-        let spendingsByMonth = entry[1]; // object where key is the month number and value is total spendings for that month
-        let dataByMonths = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-        Object.entries(spendingsByMonth).forEach(entry => {
-          dataByMonths[entry[0]-1] = entry[1];
-        });
-
-        let randomColor = this.getRandomColor();
-        categoriesWithTotals.push({
-          label: categoryName,
-          backgroundColor: randomColor,
-          fill: false,
-          borderWidth: 3,
-          borderColor: randomColor,
-          showLine: true,
-          hidden: true,
-          data: dataByMonths
-        });
-      });
-
-      categoriesWithTotals[0].hidden = false;
-      return categoriesWithTotals;
-    },
-
-    categoriesWithTotalsForQuartals: function() {
-      let categoriesWithTotals = [];
-      Object.entries(this.spendingsGroupedByCategory).forEach(entry => {
-        let categoryName = entry[0];
-        let spendingsByMonth = entry[1]; // object where key is the month number and value is total spendings for that month
-        let dataByQuartals = [0, 0, 0, 0];
-
-        Object.entries(spendingsByMonth).forEach(entry => {
-          if (entry[0] < 4) {
-            dataByQuartals[0] += entry[1];
-          } else if (entry[0] >= 4 && entry[0] < 9) {
-            dataByQuartals[1] += entry[1];
-          } else if (entry[0] >= 4 && entry[0] < 9) {
-            dataByQuartals[2] += entry[1];
-          } else {
-            dataByQuartals[3] += entry[1];
-          }
-        });
-
-        let randomColor = this.getRandomColor();
-        categoriesWithTotals.push({
-          label: categoryName,
-          backgroundColor: randomColor,
-          fill: false,
-          borderWidth: 3,
-          borderColor: randomColor,
-          showLine: true,
-          hidden: true,
-          data: dataByQuartals
-        });
-      });
-
-      categoriesWithTotals[0].hidden = false;
-      return categoriesWithTotals;
-    },
-
     data() {
       return {
         spendingsGroupedByCategory: [],
@@ -207,7 +143,9 @@
           });
         });
 
-        categoriesWithTotals[0].hidden = false;
+        if (categoriesWithTotals.length > 0) {
+          categoriesWithTotals[0].hidden = false;
+        }
 
         return {
           labels: this.monthNames,
@@ -247,7 +185,9 @@
           });
         });
 
-        categoriesWithTotals[0].hidden = false;
+        if (categoriesWithTotals > 0) {
+          categoriesWithTotals[0].hidden = false;
+        }
 
         return {
           labels: ['Q1', 'Q2', 'Q3', 'Q4'],
