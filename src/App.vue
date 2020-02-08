@@ -54,6 +54,7 @@
     text-align: center;
     color: #2c3e50;
     margin-top: 2%;
+    margin-bottom: 2%;
   }
 
   .move-to-top-right {
@@ -61,6 +62,10 @@
     position: absolute;
     left: 98%;
     transform: translate(-100%, 0%);
+  }
+
+  .table {
+    margin-bottom: 0;
   }
 
   .transactions {

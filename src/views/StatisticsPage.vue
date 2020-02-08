@@ -7,8 +7,9 @@
       v-model="statisticsYear"
       v-on:change="changeStatisticsYear"
     >
+      <option disabled value="">Select period...</option>
       <option>All time</option>
-      <option v-for="activeYear of activeYears" :key="activeYear">{{activeYear}}</option>
+      <option v-for="activeYear of activeYears" :key="activeYear">{{ activeYear }}</option>
     </select>
 
     <div class="general-statistics">
@@ -18,9 +19,8 @@
 
     <div class="center-middle chart-container">
       <label for="select-graph-mode">Graph data:</label>
-      <select id="select-graph-mode" class="center-middle form-control" v-model="selectedGraphData" @change="changeGraphData">
-        <option>By year</option>
-        <option>By quartals</option>
+      <select id="select-graph-mode" class="center-middle form-control" v-model="selectedGraphData" @change="changeGraphMode">
+        <option :key="graphMode.value" v-for="graphMode in graphDataModes">{{ graphMode.selectOption }}</option>
       </select>
       <chart class="center-middle" :chart-data="chartData" :options="chartOptions"></chart>
     </div>
@@ -43,6 +43,11 @@
   import LoadingSpinner from '@/components/utils/LoadingSpinner';
   import CategoryTable from '@/components/transactions/CategoryTable';
 
+  const graphDataModes = {
+    QUARTALS: { value: "quartals", selectOption: "By quartals" },
+    MONTHS: { value: "months", selectOption: "By months"}
+  };
+
   export default {
     components: {
       spinner: LoadingSpinner,
@@ -63,33 +68,38 @@
         spendingsGroupedByCategory: [],
         allTransactionsForYear: [],
         isLoaded: false,
-        chartData: null,
+        chartData: {},
         chartOptions: {
           responsive: true,
           maintainAspectRatio: false
         },
-        selectedGraphData: 'By year',
-        statisticsYear: 'All time',
+        graphDataModes: {
+          QUARTALS: { value: "quartals", selectOption: "By quartals" },
+          MONTHS: { value: "months", selectOption: "By months"}
+        },
+        selectedGraphData: '',
+        statisticsYear: '',
         activeYears: [],
         otherUsersSpendings: 0
       }
     },
 
     mounted: function() {
+      this.selectedGraphData = this.graphDataModes.MONTHS.selectOption;
+
       Promise.all([
         this.fetchData(),
         userService.getActiveYears()
       ])
         .then(responses => {
           this.spendingsGroupedByCategory = responses[0][0];
-          this.chartData = this.getGraphDataForYear();
           this.allTransactionsForYear = responses[0][1];
           this.otherUsersSpendings = responses[0][2];
           this.activeYears = responses[1];
           this.isLoaded = true;
         })
         .catch(error => {
-          alert(error);
+          this.$toasted.error(error);
         });
     },
 
@@ -119,16 +129,39 @@
         return color;
       },
 
-      getGraphDataForYear() {
+      getGraphData(graphMode) {
         let categoriesWithTotals = [];
+        let data = [];
+        let labels = [];
+        if (graphMode == this.graphDataModes.QUARTALS.value) {
+          labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+        } else {
+          labels = this.monthNames;
+        }
+
         Object.entries(this.spendingsGroupedByCategory).forEach(entry => {
           let categoryName = entry[0];
           let spendingsByMonth = entry[1]; // object where key is the month number and value is total spendings for that month
-          let dataByMonths = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-          Object.entries(spendingsByMonth).forEach(entry => {
-            dataByMonths[entry[0]-1] = entry[1];
-          });
+          if (graphMode == this.graphDataModes.QUARTALS.value) {
+            data = [0, 0, 0, 0];
+            Object.entries(spendingsByMonth).forEach(entry => {
+              if (entry[0] < 4) {
+                data[0] += entry[1];
+              } else if (entry[0] >= 4 && entry[0] < 9) {
+                data[1] += entry[1];
+              } else if (entry[0] >= 4 && entry[0] < 9) {
+                data[2] += entry[1];
+              } else {
+                data[3] += entry[1];
+              }
+            });
+          } else {
+            data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            Object.entries(spendingsByMonth).forEach(entry => {
+              data[entry[0]-1] = entry[1];
+            });
+          }
 
           let randomColor = this.getRandomColor();
           categoriesWithTotals.push({
@@ -139,67 +172,24 @@
             borderColor: randomColor,
             showLine: true,
             hidden: true,
-            data: dataByMonths
+            data
           });
         });
-
         if (categoriesWithTotals.length > 0) {
           categoriesWithTotals[0].hidden = false;
         }
 
         return {
-          labels: this.monthNames,
+          labels,
           datasets: categoriesWithTotals
         }
       },
 
-      getGraphDataByQuartals() {
-        let categoriesWithTotals = [];
-        Object.entries(this.spendingsGroupedByCategory).forEach(entry => {
-          let categoryName = entry[0];
-          let spendingsByMonth = entry[1]; // object where key is the month number and value is total spendings for that month
-          let dataByQuartals = [0, 0, 0, 0];
-
-          Object.entries(spendingsByMonth).forEach(entry => {
-            if (entry[0] < 4) {
-              dataByQuartals[0] += entry[1];
-            } else if (entry[0] >= 4 && entry[0] < 9) {
-              dataByQuartals[1] += entry[1];
-            } else if (entry[0] >= 4 && entry[0] < 9) {
-              dataByQuartals[2] += entry[1];
-            } else {
-              dataByQuartals[3] += entry[1];
-            }
-          });
-
-          let randomColor = this.getRandomColor();
-          categoriesWithTotals.push({
-            label: categoryName,
-            backgroundColor: randomColor,
-            fill: false,
-            borderWidth: 3,
-            borderColor: randomColor,
-            showLine: true,
-            hidden: true,
-            data: dataByQuartals
-          });
-        });
-
-        if (categoriesWithTotals > 0) {
-          categoriesWithTotals[0].hidden = false;
-        }
-
-        return {
-          labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-          datasets: categoriesWithTotals
-        }
-      },
-
-      changeGraphData() {
-        if (this.selectedGraphData == 'By year') {
-          this.chartData = this.getGraphDataForYear();
-        } else if (this.selectedGraphData == 'By quartals') {
-          this.chartData = this.getGraphDataByQuartals();
+      changeGraphMode() {
+        if (this.selectedGraphData == this.graphDataModes.MONTHS.selectOption) {
+          this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
+        } else if (this.selectedGraphData == this.graphDataModes.QUARTALS.selectOption) {
+          this.chartData = this.getGraphData(this.graphDataModes.QUARTALS.value);
         }
       },
 
@@ -213,9 +203,10 @@
         this.fetchData(year)
           .then(responses => {
             this.spendingsGroupedByCategory = responses[0];
-            this.chartData = this.getGraphDataForYear();
+            this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
             this.allTransactionsForYear = responses[1];
             this.otherUsersSpendings = responses[2];
+            this.selectedGraphData = 'By months';
             this.isLoaded = true;
           })
           .catch(error => {

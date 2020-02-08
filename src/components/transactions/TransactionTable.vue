@@ -194,9 +194,10 @@
             this.$emit(this.updatedEventName, this.allTransactions);
             this.$emit(this.processFinishEventName);
             this.$refs.descriptionInput.focus();
+            this.$toasted.success("Successfully created transaction!");
           })
           .catch(error => {
-            alert(error);
+            this.$toasted.error(error);
             this.$emit(this.processFinishEventName);
           });
       },
@@ -213,9 +214,10 @@
             );
             this.$emit(this.updatedEventName, this.allTransactions);
             this.$emit(this.processFinishEventName);
+            this.$toasted.success("Successfully deleted transaction!");
           })
           .catch(error => {
-            alert(error);
+            this.$toasted.error(error);
             this.$emit(this.processFinishEventName);
           });
       },
@@ -244,11 +246,13 @@
               this.allTransactions
                 .filter(transaction => transaction.category.id == this.transaction.category.id)
                 .forEach(transaction => transaction.category.name = 'Other');
+              this.transaction.category.id = this.categories[0].id;
               this.$emit(this.updatedEventName, this.allTransactions);
               this.$emit(this.processFinishEventName);
+              this.$toasted.success("Successfully deleted category!");
             })
             .catch(error => {
-              alert(error);
+              this.$toasted.error(error);
             });
         }
       }

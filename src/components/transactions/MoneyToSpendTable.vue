@@ -77,10 +77,11 @@
             this.editing = false;
             this.moneyToSpend = newPlannedMoney;
             this.initialValue = newPlannedMoney.value;
+            this.$toasted.success("Successfully created monthly spendings plan!");
             this.$emit(this.processFinishEventName);
           })
           .catch(error => {
-            alert(error);
+            this.$toasted.error(error);
             this.$emit(this.processFinishEventName);
           });
         } else {
@@ -90,10 +91,11 @@
               this.editing = false;
               this.moneyToSpend = editedPlannedMoney;
               this.initialValue = editedPlannedMoney.value;
+              this.$toasted.success("Successfully edited monthly planned spendings!");
               this.$emit(this.processFinishEventName);
             })
             .catch(error => {
-              alert(error);
+              this.$toasted.error(error);
               this.$emit(this.processFinishEventName);
             });
         }

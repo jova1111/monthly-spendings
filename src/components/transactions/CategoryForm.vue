@@ -58,10 +58,11 @@
           .then(createdCategory => {
             this.isLoading = false;
             this.$emit('created', createdCategory);
+            this.$toasted.success("Successfully created category!");
           })
           .catch(error => {
             this.isLoading = false;
-            alert(error);
+            this.$toasted.error(error);
           });
       }
     }
