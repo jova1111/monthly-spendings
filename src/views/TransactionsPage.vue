@@ -85,6 +85,9 @@
           this.categories = responses[1];
           this.moneyToSpend = responses[2][0];
           this.isPageLoaded = true;
+        })
+        .catch(error => {
+          this.$toasted.error(error);
         });
     },
 

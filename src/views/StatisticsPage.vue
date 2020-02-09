@@ -7,7 +7,6 @@
       v-model="statisticsYear"
       v-on:change="changeStatisticsYear"
     >
-      <option disabled value="">Select period...</option>
       <option>All time</option>
       <option v-for="activeYear of activeYears" :key="activeYear">{{ activeYear }}</option>
     </select>
@@ -43,11 +42,6 @@
   import LoadingSpinner from '@/components/utils/LoadingSpinner';
   import CategoryTable from '@/components/transactions/CategoryTable';
 
-  const graphDataModes = {
-    QUARTALS: { value: "quartals", selectOption: "By quartals" },
-    MONTHS: { value: "months", selectOption: "By months"}
-  };
-
   export default {
     components: {
       spinner: LoadingSpinner,
@@ -78,7 +72,7 @@
           MONTHS: { value: "months", selectOption: "By months"}
         },
         selectedGraphData: '',
-        statisticsYear: '',
+        statisticsYear: 'All time',
         activeYears: [],
         otherUsersSpendings: 0
       }
@@ -95,6 +89,7 @@
           this.spendingsGroupedByCategory = responses[0][0];
           this.allTransactionsForYear = responses[0][1];
           this.otherUsersSpendings = responses[0][2];
+          this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
           this.activeYears = responses[1];
           this.isLoaded = true;
         })
@@ -206,11 +201,11 @@
             this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
             this.allTransactionsForYear = responses[1];
             this.otherUsersSpendings = responses[2];
-            this.selectedGraphData = 'By months';
+            this.selectedGraphData = this.graphDataModes.MONTHS.selectOption;
             this.isLoaded = true;
           })
           .catch(error => {
-            alert(error);
+            this.$toasted.error(error);
           });
       }
     }

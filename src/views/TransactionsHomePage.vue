@@ -195,7 +195,7 @@
           this.isLoading = false;
         })
         .catch(error => {
-          alert(error);
+          this.$toasted.error(error);
         });
       }
     }
