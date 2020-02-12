@@ -33,8 +33,13 @@
       register(user){
         userService.register(user)
           .then(response => {
-            this.$router.push('/login');
-          }).catch(error => {
+            return userService.login(user);
+          })
+          .then(response => {
+            this.$router.push('/');
+            this.$toasted.success('Successfully registered!')
+          })
+          .catch(error => {
             this.error = error;
           });
       }
@@ -43,9 +48,19 @@
 </script>
 
 <style scoped>
-  .centered{
+  .centered {
       position: fixed;
       left: 50%;
       transform: translate(-50%, 0%);
+      width: 30%;
+  }
+
+  @media only screen and (max-width: 768px) {
+   .centered {
+      position: fixed;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      width: 80%;
+    }
   }
 </style>

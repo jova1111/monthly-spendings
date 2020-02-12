@@ -12,8 +12,8 @@
     </select>
 
     <div class="general-statistics">
-      <h4>Total spendings: {{ totalSpendings }}</h4>
-      <h4>Other users average spendings<span v-if="statisticsYear!='All time'"> this year</span>: {{ otherUsersSpendings }}</h4>
+      <h4>Total spendings in this period: {{ totalSpendings }}</h4>
+      <h4>Other users in this period spent on average {{ otherUsersSpendings.toFixed(1) }}<span v-if="totalSpendings > 0">, you spent {{ Math.abs(totalSpendingsDifferential).toFixed(1) }} <span v-if="totalSpendingsDifferential > 0">more</span><span v-else>less</span> than that.</span></h4>
     </div>
 
     <div class="center-middle chart-container">
@@ -54,6 +54,10 @@
     computed: {
       totalSpendings: function() {
         return this.allTransactionsForYear.reduce((sum, transaction) => sum += transaction.amount, 0);
+      },
+
+      totalSpendingsDifferential: function() {
+        return this.totalSpendings - this.otherUsersSpendings;
       }
     },
 

@@ -5,6 +5,7 @@ import {
 import {
   requestUrl
 } from '../constants/const';
+import { updateLocale } from 'moment';
 
 export default {
   create(transaction) {
@@ -16,7 +17,7 @@ export default {
       .catch(error => {
         reject(error.response.data.message);
       });
-    })
+    });
   },
 
   delete(id) {
@@ -54,6 +55,18 @@ export default {
       .catch(error => {
         reject(error.response.data.message);
       });
-    })
+    });
+  },
+
+  update(transaction) {
+    return new Promise((resolve, reject) => {
+      axios.patch(requestUrl() + '/transactions/' + transaction.id, transaction)
+      .then(response => {
+        resolve(new Transaction(response.data));
+      })
+      .catch(error => {
+        reject(error.response.data.message);
+      });
+    });
   }
 }

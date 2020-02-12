@@ -6,14 +6,18 @@
       </template>
 
       <template slot="body">
-        <input
-          @keyup.enter="addCategory"
-          v-autofocus
-          class="form-control"
-          type="text"
-          v-model="category.name"
-          placeholder="Name of category"
-        />
+        <div class="form-group">
+          <label for="nameInput">Name</label>
+          <input
+            id="nameInput"
+            @keyup.enter="addCategory"
+            v-autofocus
+            class="form-control"
+            type="text"
+            v-model="category.name"
+            placeholder="Name of category"
+          />
+        </div>
       </template>
 
       <template slot="footer">

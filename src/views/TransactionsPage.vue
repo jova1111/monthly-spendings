@@ -22,6 +22,12 @@
         @finished-processing="isLoading = false">
       </money-to-spend-table>
     </div>
+    <router-link
+        style="margin-top: 5px"
+        class="btn move-to-right violet"
+        to="/statistics"
+        tag="button"
+      >Statistics</router-link>
   </div>
   <spinner v-else></spinner>
 </template>
@@ -93,8 +99,11 @@
 
     methods:
     {
-      handleTransactionTableUpdate(transactionList) {
+      handleTransactionTableUpdate(transactionList, categoryList = null) {
         this.transactions = transactionList;
+        if (categoryList) {
+          this.categories = categoryList;
+        }
       }
     }
   }

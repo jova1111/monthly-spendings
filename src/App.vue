@@ -132,5 +132,14 @@
     .transactions th {
       padding: 1px;
     }
+
+    #app {
+      margin-top: 5%;
+      margin-bottom: 5%;
+    }
+
+    .table-responsive {
+      margin-bottom: 0;
+    }
   }
 </style>

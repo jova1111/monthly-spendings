@@ -2,40 +2,62 @@
   <div v-if="!isLoading">
     <modal @close="$emit('close')">
       <template slot="header">
-        <h3>New transaction</h3>
+        <h3>Edit transaction</h3>
       </template>
 
       <template slot="body">
-        <input
-          @keyup.enter="addTransaction"
-          v-autofocus
-          class="form-control"
-          type="text"
-          v-model="category.name"
-          placeholder="Name of category"
-        />
+        <div class="form-group">
+          <label for="descriptionInput">Description</label>
+          <input
+            id="descriptionInput"
+            ref="descriptionInput"
+            v-autofocus
+            @keyup.enter="editTransaction"
+            type="text"
+            class="form-control"
+            placeholder="Description of new transaction..."
+            v-model="transaction.description"
+          />
+        </div>
+        <div class="form-group">
+          <label for="categorySelect">Category</label>
+          <model-select
+            id="categorySelect"
+            class="inline"
+            :options="categories"
+            v-model="transaction.category.id"
+            placeholder="Select item..."
+          ></model-select>
+        </div>
+        <div>
+          <label for="amountInput">Amount</label>
+          <input
+            id="amountInput"
+            @keyup.enter="editTransaction"
+            type="text"
+            class="form-control"
+            placeholder="$$"
+            v-model="transaction.amount"
+          />
+        </div>
       </template>
 
       <template slot="footer">
         <input
           type="button"
-          @click="addCategory"
+          @click="editTransaction"
           class="btn violet modal-default-button"
-          value="Create"
+          value="Edit"
         />
       </template>
     </modal>
-    <category-form-modal
-      v-if="showNewCategoryModal"
-      @created="addCategoryFromModal"
-      @close="showNewCategoryModal = false"
-    ></category-form-modal>
   </div>
   <spinner v-else></spinner>
 </template>
 
 <script>
   import { Transaction } from '@/models/transaction';
+  import { ModelSelect } from 'vue-search-select';
   import transactionService from '@/services/transaction-service';
   import categoryService from '@/services/category-service';
   import LoadingSpinner from '../utils/LoadingSpinner';
@@ -46,30 +68,30 @@
 
     components: {
       'spinner': LoadingSpinner,
-      'modal': Modal
+      'modal': Modal,
+      'model-select': ModelSelect
     },
 
     props: {
+      transaction: Object,
       categories: Array
     },
 
     data() {
       return {
-        transaction: new Transaction,
         isLoading: false,
         showNewCategoryModal: false
       };
     },
 
     methods: {
-      addTransaction() {
+      editTransaction() {
         this.isLoading = true;
-        categoryService
-          .create(this.category.name)
-          .then(createdCategory => {
+        transactionService.update(this.transaction)
+          .then(response => {
             this.isLoading = false;
-            this.$emit('created', createdCategory);
             this.$toasted.success("Successfully created category!");
+            this.$emit('edited');
           })
           .catch(error => {
             this.isLoading = false;

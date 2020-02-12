@@ -40,20 +40,22 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, .5);
-      display: table;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       transition: opacity .3s ease;
   }
 
   .modal-wrapper {
-      display: table-cell;
-      vertical-align: middle;
+      height: 80%;
+      width: 80%;
   }
 
   .modal-container {
       width: 80%;
-      height: 60%;
+      height: 85%;
       margin: 0px auto;
-      padding: 20px 30px;
+      padding: 5px 10px;
       background-color: #fff;
       border-radius: 2px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -94,10 +96,10 @@
 
   @media only screen and (max-width: 768px) {
     .modal-container {
-      width: 300px;
+      width: 90%;
       margin-left: auto;
       margin-right: auto;
-      height: 80%;
+      height: 90%;
       margin: 0px auto;
       padding: 5px 10px;
       background-color: #fff;
@@ -105,6 +107,11 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
       transition: all .3s ease;
       font-family: Helvetica, Arial, sans-serif;
+    }
+
+    .modal-wrapper {
+      height: 90%;
+      width: 90%;
     }
 
     .modal-body {

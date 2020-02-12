@@ -1,9 +1,11 @@
 <template>
   <div v-if="!isLoading" class="container-fluid">
     <div class="centered">
-      <div>
+      <div id="selectYearContainer" class="form-group">
+        <label for="yearSelect">Select year:</label>
         <select
-          class="btn form-control select-year move-to-right"
+          id="yearSelect"
+          class="btn form-control select-year"
           v-model="selectedYear"
           v-on:change="onSelectedYearChange(selectedYear)"
         >
@@ -49,7 +51,7 @@
       </div>
       <router-link
         style="margin-top: 5px"
-        class="btn move-to-right violet"
+        class="btn violet"
         to="/statistics"
         tag="button"
       >Statistics</router-link>
@@ -224,6 +226,12 @@
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 30px;
+  }
+
+  #selectYearContainer {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @media only screen and (max-width: 768px) {

@@ -15,13 +15,17 @@
           <a>{{ moneyToSpend.value }}</a>
         </td>
         <td v-else @keyup.esc="returnOldMoneyToSpend" @keyup.enter="editMoneyToSpend">
-          <input
-            v-autofocus
-            type="text"
-            v-model="moneyToSpend.value"
-            placeholder="Enter value..."
-            class="form-control small-form-control"
-          />
+          <div class="inputs-container">
+            <input
+              v-autofocus
+              type="text"
+              v-model="moneyToSpend.value"
+              placeholder="Enter value..."
+              class="form-control small-form-control"
+            />
+            <input type="button" class="violet btn" @click="editMoneyToSpend" value="OK">
+            <input type="button" class="btn btn-default" @click="returnOldMoneyToSpend" value="Cancel">
+          </div>
         </td>
         <td>{{ totalMoneySpent }}</td>
         <td>{{ moneyToSpend.value - totalMoneySpent }}</td>
@@ -68,6 +72,10 @@
 
     methods: {
       editMoneyToSpend() {
+        if (this.initialValue == this.moneyToSpend.value) {
+          return;
+        }
+
         this.$emit(this.processStartEventName);
 
         if (this.moneyToSpend.id == -1) {
@@ -113,6 +121,12 @@
   .small-form-control {
     display: inline;
     width: 80%;
+  }
+
+  .inputs-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
   }
 </style>
 

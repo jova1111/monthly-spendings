@@ -48,5 +48,15 @@
       position: fixed;
       left: 50%;
       transform: translate(-50%, 0%);
+      width: 30%;
+  }
+
+  @media only screen and (max-width: 768px) {
+   .centered {
+      position: fixed;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      width: 80%;
+    }
   }
 </style>
