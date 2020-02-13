@@ -31,16 +31,19 @@
 
     methods: {
       register(user){
+        this.isLoading = true;
         userService.register(user)
           .then(response => {
             return userService.login(user);
           })
           .then(response => {
             this.$router.push('/');
-            this.$toasted.success('Successfully registered!')
+            this.$toasted.success('Successfully registered!');
+            this.isLoading = false;
           })
           .catch(error => {
             this.error = error;
+            this.isLoading = false;
           });
       }
     }
