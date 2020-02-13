@@ -310,7 +310,7 @@
         transactionToUpdate.category.id = this.transactionToEdit.category.id;
         transactionToUpdate.category.name = this.categories.find(category =>
           this.transactionToEdit.category.id == category.id).name;
-        transactionToUpdate.amount = this.transactionToEdit.amount;
+        transactionToUpdate.amount = Number(this.transactionToEdit.amount);
         this.$refs.descriptionInput.focus();
         this.showEditTransactionModal = false;
       }
