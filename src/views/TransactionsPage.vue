@@ -1,35 +1,37 @@
 <template>
-  <div v-if="isPageLoaded" v-bind:class="{ isLoading: 'hidden' }">
-    <div class="centered">
-      <transaction-table
-        :categories="categories"
-        :transactions="transactions"
-        :showActionControls="isCurrentMonth"
-        @started-processing="isLoading = true"
-        @finished-processing="isLoading = false"
-        @updated="handleTransactionTableUpdate">
-      </transaction-table>
-      <br>
+  <div>
+    <div v-if="isPageLoaded" v-bind:class="{ hidden: isLoading }">
+      <div class="centered">
+        <transaction-table
+          :categories="categories"
+          :transactions="transactions"
+          :showActionControls="isCurrentMonth"
+          @started-processing="isLoading = true"
+          @finished-processing="isLoading = false"
+          @updated="handleTransactionTableUpdate">
+        </transaction-table>
+        <br>
 
-      <category-table :transactions="transactions"></category-table>
-      <br>
+        <category-table :transactions="transactions"></category-table>
+        <br>
 
-      <money-to-spend-table
-        :transactions="transactions"
-        :editable="isCurrentMonth"
-        :money="moneyToSpend"
-        @started-processing="isLoading = true"
-        @finished-processing="isLoading = false">
-      </money-to-spend-table>
+        <money-to-spend-table
+          :transactions="transactions"
+          :editable="isCurrentMonth"
+          :money="moneyToSpend"
+          @started-processing="isLoading = true"
+          @finished-processing="isLoading = false">
+        </money-to-spend-table>
+      </div>
+      <router-link
+          style="margin-top: 5px"
+          class="btn move-to-right violet"
+          to="/statistics"
+          tag="button"
+        >Statistics</router-link>
     </div>
-    <router-link
-        style="margin-top: 5px"
-        class="btn move-to-right violet"
-        to="/statistics"
-        tag="button"
-      >Statistics</router-link>
+    <spinner v-if="!isPageLoaded || isLoading"></spinner>
   </div>
-  <spinner v-else></spinner>
 </template>
 
 <script>
@@ -114,5 +116,9 @@
     width: 85%;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .hidden {
+    display: hidden
   }
 </style>
