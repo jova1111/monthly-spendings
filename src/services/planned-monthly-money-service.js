@@ -28,7 +28,7 @@ export default {
 
   create(plannedMoney) {
     return new Promise((resolve, reject) => {
-      axios.post(requestUrl() + '/planned-monthly-spendings/', plannedMoney)
+      axios.post(requestUrl() + '/planned-monthly-spendings', plannedMoney)
         .then(response => {
           resolve(new PlannedMonthlyMoney(response.data));
         })

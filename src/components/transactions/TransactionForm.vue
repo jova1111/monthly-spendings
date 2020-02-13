@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLoading">
+  <div @keyup.enter="editTransaction" v-if="!isLoading">
     <modal @close="$emit('close')">
       <template slot="header">
         <h3>Edit transaction</h3>
@@ -11,8 +11,6 @@
           <input
             id="descriptionInput"
             ref="descriptionInput"
-            v-autofocus
-            @keyup.enter="editTransaction"
             type="text"
             class="form-control"
             placeholder="Description of new transaction..."
@@ -33,7 +31,6 @@
           <label for="amountInput">Amount</label>
           <input
             id="amountInput"
-            @keyup.enter="editTransaction"
             type="text"
             class="form-control"
             placeholder="$$"
@@ -46,6 +43,7 @@
         <input
           type="button"
           @click="editTransaction"
+          @keyup.enter="editTransaction"
           class="btn violet modal-default-button"
           value="Edit"
         />
@@ -84,13 +82,17 @@
       };
     },
 
+    mounted() {
+      this.$refs.descriptionInput.focus();
+    },
+
     methods: {
       editTransaction() {
         this.isLoading = true;
         transactionService.update(this.transaction)
           .then(response => {
             this.isLoading = false;
-            this.$toasted.success("Successfully created category!");
+            this.$toasted.success("Successfully edited transaction!");
             this.$emit('edited');
           })
           .catch(error => {

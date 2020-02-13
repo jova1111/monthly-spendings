@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="modal-mask">
+    <div ref="modal" class="modal-mask" tabindex="0" @keyup.esc="$emit('close')">
         <div class="modal-wrapper">
           <div class="modal-container">
             <div class="modal-header">
@@ -27,6 +27,10 @@
 <script>
   export default {
       name: 'modal',
+
+      mounted() {
+        this.$refs.modal.focus();
+      }
   }
 </script>
 

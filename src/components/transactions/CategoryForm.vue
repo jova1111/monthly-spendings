@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLoading">
+  <div @keyup.enter="addCategory" v-if="!isLoading">
     <modal @close="$emit('close')">
       <template slot="header">
         <h3>New category</h3>
@@ -10,8 +10,7 @@
           <label for="nameInput">Name</label>
           <input
             id="nameInput"
-            @keyup.enter="addCategory"
-            v-autofocus
+            ref="nameInput"
             class="form-control"
             type="text"
             v-model="category.name"
@@ -52,6 +51,10 @@
         category: new Category,
         isLoading: false
       };
+    },
+
+    mounted() {
+      this.$refs.nameInput.focus();
     },
 
     methods: {

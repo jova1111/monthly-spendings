@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div @keyup.enter="submit">
     <div class="form-group">
         <label for="email">Email address:</label>
-        <input @keyup.enter="submit" v-autofocus v-model="user.email" type="email" placeholder="Email" class="form-control" required>
+        <input v-autofocus v-model="user.email" type="email" placeholder="Email" class="form-control" required>
     </div>
     <div class="form-group">
         <label for="pwd">Password:</label>
-        <input @keyup.enter="submit" v-model="user.password" type="password" placeholder="Password" class="form-control" id="pwd" required>
+        <input v-model="user.password" type="password" placeholder="Password" class="form-control" id="pwd" required>
     </div>
     <div v-bind:class="{ hidden: !error}" class="error">
       {{ this.error }}
       <br>
     </div>
-    <button @click="submit" class="btn btn-primary">Submit</button>
+    <input type="button" @click="submit" class="btn btn-primary" value="Submit">
   </div>
 </template>
 
