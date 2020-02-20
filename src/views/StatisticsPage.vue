@@ -175,7 +175,7 @@
   }
 
   @media only screen and (max-width: 768px) {
-    #select-statistic-year, #select-graph-mode {
+    #select-statistic-year {
       width: 150px;
       margin-bottom: 10px;
     }

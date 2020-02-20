@@ -121,7 +121,7 @@
 </script>
 
 <style scoped>
-  #select-statistic-year, #select-graph-mode {
+  #select-graph-mode {
     width: 30%;
     margin-bottom: 15px;
   }
@@ -132,8 +132,8 @@
   }
 
   @media only screen and (max-width: 768px) {
-    #select-statistic-year, #select-graph-mode {
-      width: 100px;
+    #select-graph-mode {
+      width: 150px;
       margin-bottom: 10px;
     }
   }
