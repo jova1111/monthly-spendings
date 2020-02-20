@@ -9,7 +9,7 @@ export default {
   saveToken(token) {
     let tokenToDate = {
       value: token.token,
-      expireDate: token.expires_in
+      expireDate: token.expiresIn
     }
     localStorage.setItem(authenticationTokenKey, JSON.stringify(tokenToDate));
   },

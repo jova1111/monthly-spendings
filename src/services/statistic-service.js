@@ -30,5 +30,19 @@ export default {
           reject(error.response.data.message);
         });
     });
+  },
+
+  getAverageByMonth(year) {
+    return new Promise((resolve, reject) => {
+      axios.get(requestUrl() + '/statistics/average-by-month', {
+          params: {
+            year
+          }
+        }).then(response => {
+          resolve(response.data);
+        }).catch(error => {
+          reject(error.response.data.message);
+        });
+    });
   }
 }

@@ -17,13 +17,14 @@
     </div>
 
     <div class="center-middle chart-container">
-      <label for="select-graph-mode">Graph data:</label>
-      <select id="select-graph-mode" class="center-middle form-control" v-model="selectedGraphData" @change="changeGraphMode">
-        <option :key="graphMode.value" v-for="graphMode in graphDataModes">{{ graphMode.selectOption }}</option>
-      </select>
-      <chart class="center-middle" :chart-data="chartData" :options="chartOptions"></chart>
+      <h2>Total monthly spendings</h2>
+      <chart class="center-middle" :chart-data="spendingsGroupedByMonthChartData"></chart>
     </div>
 
+    <div class="center-middle chart-container">
+      <h2>Total monthly spendings by category</h2>
+      <chart class="center-middle" :chart-data="spendingsGroupedByCategoryAndMonthChartData"></chart>
+    </div>
 
     <category-table
       class="center-middle category-table"
@@ -38,14 +39,14 @@
   import statisticService from '@/services/statistic-service';
   import userService from '@/services/user-service';
   import commonData from '@/mixins/common-data';
-  import LineChart from '@/components/statistics/LineChart';
+  import MonthlyDataChart from '@/components/statistics/MonthlyDataChart';
   import LoadingSpinner from '@/components/utils/LoadingSpinner';
   import CategoryTable from '@/components/transactions/CategoryTable';
 
   export default {
     components: {
       spinner: LoadingSpinner,
-      chart: LineChart,
+      chart: MonthlyDataChart,
       'category-table': CategoryTable
     },
 
@@ -58,42 +59,38 @@
 
       totalSpendingsDifferential: function() {
         return this.totalSpendings - this.otherUsersSpendings;
+      },
+
+      spendingsGroupedByMonthChartData: function() {
+        return {
+          'User spendings': this.spendingsGroupedByMonth.userTotalMonthlySpendings,
+          'Other users average spendings': this.spendingsGroupedByMonth.otherUsersAverageMonthlySpendings
+        };
       }
     },
 
     data() {
       return {
-        spendingsGroupedByCategory: [],
+        spendingsGroupedByMonth: {},
         allTransactionsForYear: [],
         isLoaded: false,
-        chartData: {},
-        chartOptions: {
-          responsive: true,
-          maintainAspectRatio: false
-        },
-        graphDataModes: {
-          QUARTALS: { value: "quartals", selectOption: "By quartals" },
-          MONTHS: { value: "months", selectOption: "By months"}
-        },
-        selectedGraphData: '',
         statisticsYear: 'All time',
         activeYears: [],
-        otherUsersSpendings: 0
+        otherUsersSpendings: 0,
+        spendingsGroupedByCategoryAndMonthChartData: {}
       }
     },
 
     mounted: function() {
-      this.selectedGraphData = this.graphDataModes.MONTHS.selectOption;
-
       Promise.all([
         this.fetchData(),
         userService.getActiveYears()
       ])
         .then(responses => {
-          this.spendingsGroupedByCategory = responses[0][0];
+          this.spendingsGroupedByCategoryAndMonthChartData = responses[0][0];
           this.allTransactionsForYear = responses[0][1];
           this.otherUsersSpendings = responses[0][2];
-          this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
+          this.spendingsGroupedByMonth = responses[0][3];
           this.activeYears = responses[1];
           this.isLoaded = true;
         })
@@ -115,81 +112,9 @@
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
           transactionService.getAll(firstDay, lastDay),
-          statisticService.getOtherUsersSpendings(year)
+          statisticService.getOtherUsersSpendings(year),
+          statisticService.getAverageByMonth(year)
         ]);
-      },
-
-      getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-      },
-
-      getGraphData(graphMode) {
-        let categoriesWithTotals = [];
-        let data = [];
-        let labels = [];
-        if (graphMode == this.graphDataModes.QUARTALS.value) {
-          labels = ['Q1', 'Q2', 'Q3', 'Q4'];
-        } else {
-          labels = this.monthNames;
-        }
-
-        Object.entries(this.spendingsGroupedByCategory).forEach(entry => {
-          let categoryName = entry[0];
-          let spendingsByMonth = entry[1]; // object where key is the month number and value is total spendings for that month
-
-          if (graphMode == this.graphDataModes.QUARTALS.value) {
-            data = [0, 0, 0, 0];
-            Object.entries(spendingsByMonth).forEach(entry => {
-              if (entry[0] < 4) {
-                data[0] += entry[1];
-              } else if (entry[0] >= 4 && entry[0] < 9) {
-                data[1] += entry[1];
-              } else if (entry[0] >= 4 && entry[0] < 9) {
-                data[2] += entry[1];
-              } else {
-                data[3] += entry[1];
-              }
-            });
-          } else {
-            data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            Object.entries(spendingsByMonth).forEach(entry => {
-              data[entry[0]-1] = entry[1];
-            });
-          }
-
-          let randomColor = this.getRandomColor();
-          categoriesWithTotals.push({
-            label: categoryName,
-            backgroundColor: randomColor,
-            fill: false,
-            borderWidth: 3,
-            borderColor: randomColor,
-            showLine: true,
-            hidden: true,
-            data
-          });
-        });
-        if (categoriesWithTotals.length > 0) {
-          categoriesWithTotals[0].hidden = false;
-        }
-
-        return {
-          labels,
-          datasets: categoriesWithTotals
-        }
-      },
-
-      changeGraphMode() {
-        if (this.selectedGraphData == this.graphDataModes.MONTHS.selectOption) {
-          this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
-        } else if (this.selectedGraphData == this.graphDataModes.QUARTALS.selectOption) {
-          this.chartData = this.getGraphData(this.graphDataModes.QUARTALS.value);
-        }
       },
 
       changeStatisticsYear($event) {
@@ -201,11 +126,10 @@
         this.isLoaded = false;
         this.fetchData(year)
           .then(responses => {
-            this.spendingsGroupedByCategory = responses[0];
-            this.chartData = this.getGraphData(this.graphDataModes.MONTHS.value);
+            this.spendingsGroupedByCategoryAndMonthChartData = responses[0];
             this.allTransactionsForYear = responses[1];
             this.otherUsersSpendings = responses[2];
-            this.selectedGraphData = this.graphDataModes.MONTHS.selectOption;
+            this.spendingsGroupedByMonth = responses[3];
             this.isLoaded = true;
           })
           .catch(error => {
@@ -218,6 +142,7 @@
 
 <style scoped>
   .chart-container {
+    margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
     width: 85%;
@@ -251,14 +176,29 @@
 
   @media only screen and (max-width: 768px) {
     #select-statistic-year, #select-graph-mode {
-    width: 100px;
-    margin-bottom: 10px;
+      width: 150px;
+      margin-bottom: 10px;
     }
 
     .main-container {
       margin-left: 5px;
       margin-right: 5px;
       margin-bottom: 5px;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    h4 {
+      font-size: 15px;
+    }
+
+    .chart-container {
+      margin-top: 20px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 85%;
     }
   }
 </style>
