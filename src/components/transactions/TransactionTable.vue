@@ -285,6 +285,7 @@
             })
             .catch(error => {
               this.$toasted.error(error);
+              this.$emit(this.processFinishEventName);
             });
         }
       },
