@@ -111,7 +111,7 @@
         }
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
-          transactionService.getAll(firstDay, lastDay),
+          transactionService.getAll(firstDay, lastDay, "", true),
           statisticService.getOtherUsersSpendings(year),
           statisticService.getAverageByMonth(year)
         ]);

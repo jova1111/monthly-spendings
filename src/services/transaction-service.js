@@ -32,13 +32,14 @@ export default {
     });
   },
 
-  getAll(startDate = null, endDate = null, groupBy = "") {
+  getAll(startDate = null, endDate = null, groupBy = "", cached = false) {
     return new Promise((resolve, reject) => {
       axios.get(requestUrl() + '/transactions', {
         params: {
           startDate,
           endDate,
-          groupBy
+          groupBy,
+          cached
         }
       })
       .then(response => {
