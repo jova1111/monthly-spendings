@@ -82,8 +82,10 @@
       }
       this.isCurrentMonth = (date.getUTCMonth() + 1 == selectedMonth && date.getUTCFullYear() == selectedYear);
 
-      let firstDayOfMonth = new Date(selectedYear, selectedMonth - 1, 1);
-      let lastDayOfMonth =  new Date(selectedYear, selectedMonth, 0);
+      let firstDayOfMonth = new Date(selectedYear, selectedMonth - 1, 1).toLocaleDateString('sr-RS');
+      let lastDayOfMonth =  new Date(selectedYear, selectedMonth, 1).toLocaleDateString('sr-RS');
+      console.log(firstDayOfMonth);
+      console.log(lastDayOfMonth);
       Promise.all([
         transactionService.getAll(firstDayOfMonth, lastDayOfMonth),
         categoryService.getAll(),

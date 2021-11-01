@@ -13,7 +13,6 @@
 
     <div class="general-statistics">
       <h4>Total spendings in this period: {{ totalSpendings }}</h4>
-      <h4>Other users in this period spent on average {{ otherUsersSpendings.toFixed(1) }}<span v-if="totalSpendings > 0">, you spent {{ Math.abs(totalSpendingsDifferential).toFixed(1) }} <span v-if="totalSpendingsDifferential > 0">more</span><span v-else>less</span> than that.</span></h4>
     </div>
 
     <div class="center-middle chart-container">
@@ -57,15 +56,21 @@
         return this.allTransactionsForYear.reduce((sum, transaction) => sum += transaction.amount, 0);
       },
 
-      totalSpendingsDifferential: function() {
-        return this.totalSpendings - this.otherUsersSpendings;
-      },
-
       spendingsGroupedByMonthChartData: function() {
         return {
-          'User spendings': this.spendingsGroupedByMonth.userTotalMonthlySpendings,
-          'Other users average spendings': this.spendingsGroupedByMonth.otherUsersAverageMonthlySpendings
+          'User spendings': this.spendingsGroupedByMonth.userTotalMonthlySpendings
         };
+      },
+      spendingsGroupedByCategoryAndMonthChartData: function() {
+          let retVal = {};
+          for (let categorySpendings of this.spendingsGroupedByCategoryAndMonth) {
+            let categoryName = Object.keys(categorySpendings)[0];
+            let monthlySpending = {};
+            monthlySpending[categorySpendings[categoryName][0].month] = categorySpendings[categoryName][0].total;
+            retVal[categoryName] = monthlySpending;
+          }
+          console.log(retVal);
+          return retVal;
       }
     },
 
@@ -76,8 +81,7 @@
         isLoaded: false,
         statisticsYear: 'All time',
         activeYears: [],
-        otherUsersSpendings: 0,
-        spendingsGroupedByCategoryAndMonthChartData: {}
+        spendingsGroupedByCategoryAndMonth: []
       }
     },
 
@@ -87,10 +91,9 @@
         userService.getActiveYears()
       ])
         .then(responses => {
-          this.spendingsGroupedByCategoryAndMonthChartData = responses[0][0];
+          this.spendingsGroupedByCategoryAndMonth = responses[0][0];
           this.allTransactionsForYear = responses[0][1];
-          this.otherUsersSpendings = responses[0][2];
-          this.spendingsGroupedByMonth = responses[0][3];
+          this.spendingsGroupedByMonth = responses[0][2];
           this.activeYears = responses[1];
           this.isLoaded = true;
         })
@@ -112,7 +115,6 @@
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
           transactionService.getAll(firstDay, lastDay, "", true),
-          statisticService.getOtherUsersSpendings(year),
           statisticService.getAverageByMonth(year)
         ]);
       },
@@ -126,10 +128,10 @@
         this.isLoaded = false;
         this.fetchData(year)
           .then(responses => {
-            this.spendingsGroupedByCategoryAndMonthChartData = responses[0];
+            console.log(responses)
+            this.spendingsGroupedByCategoryAndMonth = responses[0];
             this.allTransactionsForYear = responses[1];
-            this.otherUsersSpendings = responses[2];
-            this.spendingsGroupedByMonth = responses[3];
+            this.spendingsGroupedByMonth = responses[2];
             this.isLoaded = true;
           })
           .catch(error => {
