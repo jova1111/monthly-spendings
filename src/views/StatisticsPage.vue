@@ -66,10 +66,11 @@
           for (let categorySpendings of this.spendingsGroupedByCategoryAndMonth) {
             let categoryName = Object.keys(categorySpendings)[0];
             let monthlySpending = {};
-            monthlySpending[categorySpendings[categoryName][0].month] = categorySpendings[categoryName][0].total;
+            for (let i = 0; i < categorySpendings[categoryName].length; i++) {
+              monthlySpending[categorySpendings[categoryName][i].month] = categorySpendings[categoryName][i].total;
+            }
             retVal[categoryName] = monthlySpending;
           }
-          console.log(retVal);
           return retVal;
       }
     },
@@ -109,9 +110,10 @@
         let year = null;
         if (dataYear) {
           year = dataYear;
-          firstDay = new Date(year, 0, 1);
-          lastDay = new Date(year, 11, 31);
+          firstDay = new Date(year, 0, 1).toLocaleDateString('sr-RS');
+          lastDay = new Date(parseInt(year) + 1, 0, 1).toLocaleDateString('sr-RS');
         }
+        console.log("days", firstDay, lastDay);
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
           transactionService.getAll(firstDay, lastDay, "", true),
@@ -128,7 +130,6 @@
         this.isLoaded = false;
         this.fetchData(year)
           .then(responses => {
-            console.log(responses)
             this.spendingsGroupedByCategoryAndMonth = responses[0];
             this.allTransactionsForYear = responses[1];
             this.spendingsGroupedByMonth = responses[2];
