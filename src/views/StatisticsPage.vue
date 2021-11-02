@@ -113,7 +113,6 @@
           firstDay = new Date(year, 0, 1).toLocaleDateString('sr-RS');
           lastDay = new Date(parseInt(year) + 1, 0, 1).toLocaleDateString('sr-RS');
         }
-        console.log("days", firstDay, lastDay);
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
           transactionService.getAll(firstDay, lastDay, "", true),

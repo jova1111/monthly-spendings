@@ -84,8 +84,6 @@
 
       let firstDayOfMonth = new Date(selectedYear, selectedMonth - 1, 1).toLocaleDateString('sr-RS');
       let lastDayOfMonth =  new Date(selectedYear, selectedMonth, 1).toLocaleDateString('sr-RS');
-      console.log(firstDayOfMonth);
-      console.log(lastDayOfMonth);
       Promise.all([
         transactionService.getAll(firstDayOfMonth, lastDayOfMonth),
         categoryService.getAll(),

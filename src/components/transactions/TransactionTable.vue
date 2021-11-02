@@ -220,7 +220,7 @@
             this.allTransactions.push(response);
             this.$emit(this.updatedEventName, this.allTransactions);
             this.$emit(this.processFinishEventName);
-            this.$refs.descriptionInput.focus();
+            this.$nextTick(() => this.$refs.descriptionInput.focus());
             this.$toasted.success("Successfully created transaction!");
           })
           .catch(error => {
