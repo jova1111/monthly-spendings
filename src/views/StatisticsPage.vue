@@ -56,22 +56,25 @@
         return this.allTransactionsForYear.reduce((sum, transaction) => sum += transaction.amount, 0);
       },
 
-      spendingsGroupedByMonthChartData: function() {
-        return {
-          'User spendings': this.spendingsGroupedByMonth.userTotalMonthlySpendings
-        };
-      },
       spendingsGroupedByCategoryAndMonthChartData: function() {
-          let retVal = {};
-          for (let categorySpendings of this.spendingsGroupedByCategoryAndMonth) {
-            let categoryName = Object.keys(categorySpendings)[0];
-            let monthlySpending = {};
-            for (let i = 0; i < categorySpendings[categoryName].length; i++) {
-              monthlySpending[categorySpendings[categoryName][i].month] = categorySpendings[categoryName][i].total;
-            }
-            retVal[categoryName] = monthlySpending;
+        let retVal = {};
+        for (let categorySpendings of this.spendingsGroupedByCategoryAndMonth) {
+          let categoryName = Object.keys(categorySpendings)[0];
+          let monthlySpending = {};
+          for (let i = 0; i < categorySpendings[categoryName].length; i++) {
+            monthlySpending[categorySpendings[categoryName][i].month] = categorySpendings[categoryName][i].total;
           }
-          return retVal;
+          retVal[categoryName] = monthlySpending;
+        }
+        return retVal;
+      },
+
+      spendingsGroupedByMonthChartData: function() {
+        let retVal = {};
+        for (let monthlySpending of this.spendingsGroupedByMonth) {
+          retVal[monthlySpending.month] = monthlySpending.total;
+        }
+        return retVal = { 'User spendings': retVal };
       }
     },
 
@@ -116,7 +119,7 @@
         return Promise.all([
           statisticService.getSpendingsByCategory(year),
           transactionService.getAll(firstDay, lastDay, "", true),
-          statisticService.getAverageByMonth(year)
+          statisticService.getSpendingsByMonths(year)
         ]);
       },
 

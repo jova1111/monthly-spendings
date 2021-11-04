@@ -32,9 +32,9 @@ export default {
     });
   },
 
-  getAverageByMonth(year) {
+  getSpendingsByMonths(year) {
     return new Promise((resolve, reject) => {
-      axios.get(requestUrl() + '/statistics/average-by-month', {
+      axios.get(requestUrl() + '/statistics/spendings-by-months', {
           params: {
             year
           }
