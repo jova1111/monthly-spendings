@@ -11,7 +11,7 @@
         @click="showTransactionsForCategory(categorySpending.name)"
       >
         <td>{{ categorySpending.name }}</td>
-        <td>{{ categorySpending.total }}</td>
+        <td>{{ categorySpending.total | numberWithCommas }}</td>
       </tr>
     </table>
     <category-transactions

@@ -12,7 +12,7 @@
     </select>
 
     <div class="general-statistics">
-      <h4>Total spendings in this period: {{ totalSpendings }}</h4>
+      <h4>Total spendings in this period: {{ totalSpendings | numberWithCommas }}</h4>
     </div>
 
     <div class="center-middle chart-container">

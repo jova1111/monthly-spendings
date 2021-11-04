@@ -14,6 +14,11 @@ Vue.directive('autofocus', autofocus);
 
 interceptorsSetup();
 
+// setup global filters
+Vue.filter('numberWithCommas', function (value) {
+  return value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

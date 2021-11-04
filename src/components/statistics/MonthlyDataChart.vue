@@ -33,7 +33,30 @@
         parsedChartData: {},
         chartOptions: {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          tooltips: {
+            callbacks: {
+                label: function(tooltipItem, data) {
+                    return tooltipItem.yLabel.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
+                }
+            }
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  callback: function(label, index, labels) {
+                    if (label >= 1000) {
+                      return label/1000+'k';
+                    }
+                    else {
+                      return label;
+                    }
+                  }
+                }
+              }
+            ]
+          }
         },
       }
     },

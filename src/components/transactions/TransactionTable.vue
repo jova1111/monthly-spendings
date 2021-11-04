@@ -70,7 +70,7 @@
               <td>{{ dailyTransaction.creationDate | toLocalDate }}</td>
               <td>{{ dailyTransaction.description }}</td>
               <td>{{ dailyTransaction.category.name }}</td>
-              <td>{{ dailyTransaction.amount }}</td>
+              <td>{{ dailyTransaction.amount | numberWithCommas }}</td>
               <td v-if="showActionControls">
                 <div class="actions-container">
                   <input
@@ -90,7 +90,7 @@
             </tr>
             <tr class="total-row" v-bind:key="key" v-if="showDailySpendings">
               <td colspan="3">Total:</td>
-              <td>{{ dailyTransactions.sum }}</td>
+              <td>{{ dailyTransactions.sum | numberWithCommas }}</td>
             </tr>
           </template>
         </template>

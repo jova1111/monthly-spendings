@@ -12,7 +12,7 @@
           @click="editable ? editing = true : editing = false"
           v-if="!editing"
         >
-          <a>{{ moneyToSpend.value }}</a>
+          <a>{{ moneyToSpend.value | numberWithCommas }}</a>
         </td>
         <td v-else @keyup.esc="returnOldMoneyToSpend" @keyup.enter="editMoneyToSpend">
           <div class="inputs-container">
@@ -27,8 +27,8 @@
             <input type="button" class="btn btn-default" @click="returnOldMoneyToSpend" value="Cancel">
           </div>
         </td>
-        <td>{{ totalMoneySpent }}</td>
-        <td>{{ moneyToSpend.value - totalMoneySpent }}</td>
+        <td>{{ totalMoneySpent | numberWithCommas }}</td>
+        <td>{{ moneyToSpend.value - totalMoneySpent | numberWithCommas }}</td>
       </tr>
     </table>
   </div>
@@ -129,4 +129,3 @@
     justify-content: space-evenly;
   }
 </style>
-

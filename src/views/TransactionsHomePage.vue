@@ -25,25 +25,25 @@
           >
             <td>{{ filteredMonth.month }}</td>
             <td>
-              {{ filteredMonth.moneySpent }}
+              {{ filteredMonth.moneySpent | numberWithCommas }}
               <span
                 v-if="getMoneyPerMonthForMonth(filteredMonth.index) > 0"
               >(<span
                   class="red"
                   v-bind:class="{ green: getMoneyPerMonthForMonth(filteredMonth.index) - filteredMonth.moneySpent > 0}"
-                >{{ getMoneyPerMonthForMonth(filteredMonth.index) - filteredMonth.moneySpent}}</span>)
+                >{{ getMoneyPerMonthForMonth(filteredMonth.index) - filteredMonth.moneySpent  | numberWithCommas }}</span>)
               </span>
             </td>
           </tr>
           <tr>
             <td>Total spendings for a year:</td>
             <td>
-              {{ yearlySpendings.spendings}}
+              {{ yearlySpendings.spendings | numberWithCommas }}
               <span v-if="yearlySpendings.plannedMoney > 0">
                 (<span
                     class="red"
                     v-bind:class="{ green: yearlySpendings.plannedMoney - yearlySpendings.spendings > 0}"
-                  >{{ yearlySpendings.plannedMoney - yearlySpendings.spendings }}</span>)
+                  >{{ yearlySpendings.plannedMoney - yearlySpendings.spendings | numberWithCommas }}</span>)
               </span>
             </td>
           </tr>
