@@ -26,8 +26,8 @@
     data() {
       return {
         graphDataModes: {
-          QUARTALS: { value: "quartals", selectOption: "By quartals" },
-          MONTHS: { value: "months", selectOption: "By months"}
+          QUARTALS: { value: "quartals", selectOption: 'By quartals' },
+          MONTHS: { value: "months", selectOption: 'By months' }
         },
         selectedGraphData: '',
         parsedChartData: {},
@@ -37,7 +37,7 @@
           tooltips: {
             callbacks: {
                 label: function(tooltipItem, data) {
-                    return tooltipItem.yLabel.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
+                    return tooltipItem.yLabel.toLocaleString('sr-RS');
                 }
             }
           },
@@ -47,7 +47,7 @@
                 ticks: {
                   callback: function(label, index, labels) {
                     if (label >= 1000) {
-                      return label/1000+'k';
+                      return label / 1000 + 'k';
                     }
                     else {
                       return label;

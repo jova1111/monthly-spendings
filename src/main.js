@@ -16,7 +16,7 @@ interceptorsSetup();
 
 // setup global filters
 Vue.filter('numberWithCommas', function (value) {
-  return value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
+  return value.toLocaleString('sr-RS');
 })
 
 /* eslint-disable no-new */
