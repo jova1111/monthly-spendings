@@ -367,7 +367,11 @@ export default {
         (category) => this.transactionToEdit.category.id == category.id
       ).name;
       transactionToUpdate.amount = Number(this.transactionToEdit.amount);
-      this.$refs.descriptionInput.focus();
+      try {
+        this.$refs.descriptionInput.focus();
+      } catch (error) {
+        // new category form is probablly not visible, no problem
+      }
       this.showEditTransactionModal = false;
     },
   },

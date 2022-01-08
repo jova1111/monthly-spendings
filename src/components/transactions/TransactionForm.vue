@@ -54,53 +54,51 @@
 </template>
 
 <script>
-  import { Transaction } from '@/models/transaction';
-  import { ModelSelect } from 'vue-search-select';
-  import transactionService from '@/services/transaction-service';
-  import categoryService from '@/services/category-service';
-  import LoadingSpinner from '../utils/LoadingSpinner';
-  import Modal from '../utils/Modal';
+import { ModelSelect } from "vue-search-select";
+import transactionService from "@/services/transaction-service";
+import LoadingSpinner from "../utils/LoadingSpinner";
+import Modal from "../utils/Modal";
 
-  export default {
-    name: 'transaction-form',
+export default {
+  name: "transaction-form",
 
-    components: {
-      'spinner': LoadingSpinner,
-      'modal': Modal,
-      'model-select': ModelSelect
+  components: {
+    spinner: LoadingSpinner,
+    modal: Modal,
+    "model-select": ModelSelect,
+  },
+
+  props: {
+    transaction: Object,
+    categories: Array,
+  },
+
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
+
+  mounted() {
+    this.$refs.descriptionInput.focus();
+  },
+
+  methods: {
+    editTransaction() {
+      this.isLoading = true;
+      transactionService
+        .update(this.transaction)
+        .then(() => {
+          this.isLoading = false;
+          this.$toasted.success("Successfully edited transaction!");
+          this.$emit("edited");
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          this.$toasted.error(error);
+        });
     },
-
-    props: {
-      transaction: Object,
-      categories: Array
-    },
-
-    data() {
-      return {
-        isLoading: false,
-        showNewCategoryModal: false
-      };
-    },
-
-    mounted() {
-      this.$refs.descriptionInput.focus();
-    },
-
-    methods: {
-      editTransaction() {
-        this.isLoading = true;
-        transactionService.update(this.transaction)
-          .then(response => {
-            this.isLoading = false;
-            this.$toasted.success("Successfully edited transaction!");
-            this.$emit('edited');
-          })
-          .catch(error => {
-            this.isLoading = false;
-            this.$toasted.error(error);
-          });
-      }
-    }
-  };
+  },
+};
 </script>
 
