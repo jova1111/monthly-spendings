@@ -145,13 +145,13 @@ import CategoryForm from "./CategoryForm";
 import TransactionForm from "./TransactionForm";
 import { Transaction } from "@/models/transaction";
 import { ModelSelect } from "vue-search-select";
+import moment from "moment";
 
 export default {
   filters: {
     toLocalDate: function (value) {
       if (!value) return "";
-      let date = new Date(value);
-      return date.toLocaleDateString("en-GB");
+      return moment(value).format("D.M.YYYY.");
     },
   },
 
