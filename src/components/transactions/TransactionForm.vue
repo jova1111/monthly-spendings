@@ -45,6 +45,7 @@
             type="date"
             class="form-control"
             v-model="transaction.creationDate"
+            :max="today"
           />
         </div>
       </template>
@@ -105,6 +106,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      today: moment().format("YYYY-MM-DD"),
     };
   },
 
