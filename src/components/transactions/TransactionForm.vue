@@ -1,5 +1,5 @@
 <template>
-  <div @keyup.enter="editTransaction" v-if="!isLoading">
+  <div @keyup.enter="submit" v-if="!isLoading">
     <modal @close="$emit('close')">
       <template slot="header">
         <h3 v-if="isEditing">Edit transaction</h3>
@@ -122,6 +122,14 @@ export default {
   },
 
   methods: {
+    submit() {
+      if (this.isEditing) {
+        this.editTransaction();
+      } else {
+        this.createTransaction();
+      }
+    },
+
     editTransaction() {
       this.isLoading = true;
       transactionService

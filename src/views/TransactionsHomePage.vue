@@ -254,10 +254,6 @@ export default {
         createdTransaction.amount
       );
       this.monthlySpendings = newSpendings;
-      this.monthlySpendings[creationDate.getMonth() + 1] = Number(
-        createdTransaction.amount
-      );
-      console.log(this.monthlySpendings);
       this.showCreateTransactionModal = false;
     },
   },
