@@ -252,7 +252,7 @@ export default {
 
   methods: {
     createTransaction() {
-      this.transaction.creationDate = moment().format("YYYY-MM-DD");
+      this.transaction.creationDate = moment().format("YYYY-MM-DD HH:mm:ss");
       this.$emit(this.processStartEventName);
       transactionService
         .create(this.transaction)
@@ -387,11 +387,13 @@ export default {
         (category) => this.transactionToEdit.category.id == category.id
       ).name;
       transactionToUpdate.amount = Number(this.transactionToEdit.amount);
+      transactionToUpdate.creationDate = this.transactionToEdit.creationDate;
       try {
         this.$refs.descriptionInput.focus();
       } catch (error) {
         // new category form is probably not visible, no problem
       }
+      this.$emit(this.updatedEventName, this.allTransactions);
       this.showEditTransactionModal = false;
     },
   },
