@@ -130,6 +130,7 @@
       v-if="showEditTransactionModal"
       :categories="categoryValues"
       :transaction="transactionToEdit"
+      :isEditing="true"
       @edited="updateTransaction"
       @close="showEditTransactionModal = false"
     >
@@ -251,6 +252,7 @@ export default {
 
   methods: {
     createTransaction() {
+      this.transaction.creationDate = moment().format("YYYY-MM-DD");
       this.$emit(this.processStartEventName);
       transactionService
         .create(this.transaction)
@@ -353,13 +355,31 @@ export default {
       this.transactionToEdit.amount = transaction.amount;
       this.transactionToEdit.category.id = transaction.category.id;
       this.transactionToEdit.description = transaction.description;
+      this.transactionToEdit.creationDate = transaction.creationDate;
       this.showEditTransactionModal = true;
     },
 
     updateTransaction() {
-      let transactionToUpdate = this.transactions.find(
+      let transactionToUpdate = this.allTransactions.find(
         (transaction) => transaction.id == this.transactionToEdit.id
       );
+      let transactionToUpdateDate = new Date(transactionToUpdate.creationDate);
+      let updatedTransactionDate = new Date(
+        this.transactionToEdit.creationDate
+      );
+      // if date updated to another month/year, remove transaction from the list
+      if (
+        transactionToUpdateDate.getMonth() !=
+          updatedTransactionDate.getMonth() ||
+        transactionToUpdateDate.getYear() != updatedTransactionDate.getYear()
+      ) {
+        this.allTransactions = this.allTransactions.filter(
+          (transaction) => transaction.id != transactionToUpdate.id
+        );
+        this.showEditTransactionModal = false;
+        this.$emit(this.updatedEventName, this.allTransactions);
+        return;
+      }
       transactionToUpdate.id = this.transactionToEdit.id;
       transactionToUpdate.description = this.transactionToEdit.description;
       transactionToUpdate.category.id = this.transactionToEdit.category.id;
@@ -370,7 +390,7 @@ export default {
       try {
         this.$refs.descriptionInput.focus();
       } catch (error) {
-        // new category form is probablly not visible, no problem
+        // new category form is probably not visible, no problem
       }
       this.showEditTransactionModal = false;
     },

@@ -5,7 +5,7 @@ export class Transaction {
         if (!json) {
             this.description = '';
             this.amount = 0;
-            this.creationDate = '';
+            this.creationDate = new Date();
             this.id = -1;
             this.category = new Category;
         } else {
