@@ -387,11 +387,11 @@ export default {
         (category) => this.transactionToEdit.category.id == category.id
       ).name;
       transactionToUpdate.amount = Number(this.transactionToEdit.amount);
-      transactionToUpdate.creationDate = this.transactionToEdit.creationDate;
+      transactionToUpdate.creationDate = updatedTransactionDate;
       try {
         this.$refs.descriptionInput.focus();
       } catch (error) {
-        // new category form is probably not visible, no problem
+        // new transaction form is probably not visible, no problem
       }
       this.$emit(this.updatedEventName, this.allTransactions);
       this.showEditTransactionModal = false;
