@@ -28,7 +28,7 @@
             placeholder="Select category..."
           ></model-select>
         </div>
-        <div>
+        <div class="form-group">
           <label for="amountInput">Amount</label>
           <input
             id="amountInput"
@@ -38,7 +38,7 @@
             v-model="transaction.amount"
           />
         </div>
-        <div>
+        <div class="form-group">
           <label for="dateInput">Date</label>
           <input
             id="dateInput"
