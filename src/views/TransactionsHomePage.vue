@@ -164,7 +164,7 @@ export default {
   mounted() {
     let currentYear = new Date().getUTCFullYear();
     let firstDay = new Date(currentYear, 0, 1);
-    let lastDay = new Date(currentYear, 11, 31);
+    let lastDay = new Date(currentYear + 1, 0, 1);
 
     this.getData(firstDay, lastDay)
       .then((responses) => {
