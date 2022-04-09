@@ -15,7 +15,7 @@
     "compression": "^1.7.4",
     "eslint": "^5.2.0",
     "express": "^4.16.3",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "vue": "^2.5.2",
     "vue-autofocus-directive": "0.0.5",
     "vue-chartjs": "^3.4.2",
