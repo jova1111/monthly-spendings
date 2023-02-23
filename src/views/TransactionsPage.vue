@@ -82,12 +82,12 @@ export default {
       selectedYear,
       selectedMonth - 1,
       1
-    ).toLocaleDateString("sr-RS");
+    ).toLocaleDateString("en-US");
     let lastDayOfMonth = new Date(
       selectedYear,
       selectedMonth,
       1
-    ).toLocaleDateString("sr-RS");
+    ).toLocaleDateString("en-US");
     Promise.all([
       transactionService.getAll(firstDayOfMonth, lastDayOfMonth),
       categoryService.getAll(),
