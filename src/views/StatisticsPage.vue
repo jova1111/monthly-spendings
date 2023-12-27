@@ -153,14 +153,12 @@ export default {
       let year = null;
       if (dataYear) {
         year = dataYear;
-        firstDay = new Date(year, 0, 1).toLocaleDateString("sr-RS");
-        lastDay = new Date(parseInt(year) + 1, 0, 1).toLocaleDateString(
-          "sr-RS"
-        );
+        firstDay = new Date(year, 0, 1).toLocaleDateString('en-US');
+        lastDay = new Date(parseInt(year) + 1, 0, 1).toLocaleDateString('en-US');
       }
       return Promise.all([
         statisticService.getSpendingsByCategory(year),
-        transactionService.getAll(firstDay, lastDay, "", true),
+        transactionService.getAll(firstDay, lastDay, '', true),
         statisticService.getSpendingsByMonths(year),
       ]);
     },
