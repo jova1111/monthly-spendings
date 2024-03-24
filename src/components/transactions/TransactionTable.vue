@@ -102,7 +102,7 @@
                     type="button"
                     class="action-button violet btn"
                     value="Edit"
-                    @click="showEditModal(dailyTransaction)"
+                    @click="editTransaction(dailyTransaction)"
                   />
                   <input
                     type="button"
@@ -167,6 +167,7 @@ export default {
     transactions: Array,
     categories: Array,
     showActionControls: Boolean,
+    showingInModal: Boolean
   },
 
   created() {
@@ -214,6 +215,9 @@ export default {
     },
 
     showNewTransactionForm: function () {
+      if (this.showingInModal) {
+        return false;
+      }
       if (this.allTransactions.length > 0) {
         let now = new Date();
         let creationDate = new Date(this.allTransactions[0].creationDate);
@@ -348,6 +352,19 @@ export default {
       this.transaction.category.id = this.categories[0].id;
       this.transaction.description = "";
       this.transaction.amount = 0;
+    },
+
+    editTransaction(transaction) {
+      // if this table is shown inside modal, another modal should not be opened, redirect to edit page
+      if (this.showingInModal) {
+        this.$router.push({
+          name: "TransactionUpdatePage",
+          params: { id: transaction.id }
+        });
+      }
+      else {
+        this.showEditModal(transaction);
+      }
     },
 
     showEditModal(transaction) {

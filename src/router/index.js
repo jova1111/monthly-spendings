@@ -5,6 +5,7 @@ import LoginPage from '@/views/LoginPage';
 import RegisterPage from '@/views/RegisterPage';
 import TransactionsHomePage from '@/views/TransactionsHomePage';
 import TransactionsPage from '@/views/TransactionsPage';
+import TransactionUpdatePage from '@/views/TransactionUpdatePage';
 import StatisticsPage from '@/views/StatisticsPage';
 import { lockedPagesForGuestRegex } from '../constants/const';
 import { lockedPagesForUserRegex } from '../constants/const';
@@ -45,6 +46,11 @@ const router = new VueRouter(
         path: '/statistics',
         name: 'StatisticsPage',
         component: StatisticsPage
+      },
+      {
+        path: '/transaction/:id/update',
+        name: 'TransactionUpdatePage',
+        component: TransactionUpdatePage
       }
     ],
 

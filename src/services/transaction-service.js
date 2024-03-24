@@ -69,5 +69,17 @@ export default {
         reject(error.response.data.message);
       });
     });
+  },
+
+  get(id) {
+    return new Promise((resolve, reject) => {
+      axios.get(requestUrl() + '/transactions/' + id)
+      .then(response => {
+        resolve(new Transaction(response.data));
+      })
+      .catch(error => {
+        reject(error.response.data.message);
+      });
+    });
   }
 }

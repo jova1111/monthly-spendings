@@ -128,8 +128,14 @@ export default {
   },
 
   mounted: function () {
+    var queryYear = this.$route.query.year;
+    let selectedYear = null;
+    if (queryYear && Number(queryYear)) {
+      selectedYear = queryYear;
+      this.statisticsYear = selectedYear;
+    }
     Promise.all([
-      this.fetchData(),
+      this.fetchData(selectedYear),
       userService.getActiveYears(),
       statisticService.getSpendingsByMonthsByAllYears(),
     ])
@@ -137,7 +143,7 @@ export default {
         this.spendingsGroupedByCategoryAndMonth = responses[0][0];
         this.allTransactionsForYear = responses[0][1];
         this.spendingsGroupedByMonth = responses[0][2];
-        this.activeYears = responses[1];
+        this.activeYears = responses[1].sort().reverse();
         this.spendingsGroupedByMonthByAllYears = responses[2];
         this.isLoaded = true;
       })
@@ -167,6 +173,7 @@ export default {
       let year = null;
       if (!isNaN($event.target.value)) {
         year = $event.target.value;
+        this.$router.replace({ query: { year } });
       }
 
       this.isLoaded = false;

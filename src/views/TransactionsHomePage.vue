@@ -162,17 +162,22 @@ export default {
   },
 
   mounted() {
+    var queryYear = this.$route.query.year;
     let currentYear = new Date().getUTCFullYear();
-    let firstDay = new Date(currentYear, 0, 1);
-    let lastDay = new Date(currentYear + 1, 0, 1);
+    let selectedYear = currentYear;
+    if (queryYear && Number(queryYear)) {
+      selectedYear = Number(queryYear);
+    }
+    let firstDay = new Date(selectedYear, 0, 1);
+    let lastDay = new Date(selectedYear + 1, 0, 1);
 
     this.getData(firstDay, lastDay)
       .then((responses) => {
         this.monthlySpendings = responses[0];
         this.activeYears = responses[1].sort().reverse();
         // this prevents having empty year selector if user wasn't active in current year
-        if (!this.activeYears.includes(currentYear)) {
-          this.activeYears.push(currentYear);
+        if (!this.activeYears.includes(selectedYear)) {
+          this.activeYears.push(selectedYear);
         }
         this.plannedMonthlyMoneyList = responses[2];
 
@@ -182,8 +187,7 @@ export default {
             text: category.name,
           };
         });
-
-        this.selectedYear = currentYear;
+        this.selectedYear = selectedYear;
         this.isLoading = false;
       })
       .catch((error) => {
@@ -230,6 +234,7 @@ export default {
     },
 
     onSelectedYearChange(year) {
+      this.$router.replace({ query: { year } });
       let firstDay = new Date(year, 0, 1);
       let lastDay = new Date(year, 11, 31);
 

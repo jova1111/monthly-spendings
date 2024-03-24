@@ -5,7 +5,10 @@
     </template>
 
     <template slot="body">
-       <transaction-table :transactions="filteredTransactions" :showActionControls="false"></transaction-table>
+       <transaction-table :transactions="filteredTransactions"
+        :showActionControls="true"
+        :showingInModal="true">
+        </transaction-table>
     </template>
   </modal>
 </template>

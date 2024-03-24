@@ -16,7 +16,6 @@
 
 <script>
   import userService from '@/services/user-service';
-  import VueRouter from 'vue-router';
 
   export default {
     name: 'App',
